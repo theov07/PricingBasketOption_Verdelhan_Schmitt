@@ -42,5 +42,54 @@ namespace BasketOptionPricer
                     throw new ArgumentException("Invalid option type");
             }
         }
+        
+        /// <summary>
+        /// Génère un nombre aléatoire suivant une loi normale N(0,1) par Box-Muller
+        /// </summary>
+        public static double GenerateNormalRandom(Random random)
+        {
+            // Version simplifiée de Box-Muller sans variables static
+            double u1 = random.NextDouble();
+            double u2 = random.NextDouble();
+            
+            double z0 = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Cos(2.0 * Math.PI * u2);
+            return z0;
+        }
+        
+        /// <summary>
+        /// Décomposition de Cholesky d'une matrice de corrélation
+        /// </summary>
+        public static double[,] CholeskyDecomposition(double[,] matrix)
+        {
+            int n = matrix.GetLength(0);
+            double[,] result = new double[n, n];
+            
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j <= i; j++)
+                {
+                    if (i == j)
+                    {
+                        double sum = 0;
+                        for (int k = 0; k < j; k++)
+                        {
+                            sum += result[j, k] * result[j, k];
+                        }
+                        result[j, j] = Math.Sqrt(matrix[j, j] - sum);
+                    }
+                    else
+                    {
+                        double sum = 0;
+                        for (int k = 0; k < j; k++)
+                        {
+                            sum += result[i, k] * result[j, k];
+                        }
+                        result[i, j] = (matrix[i, j] - sum) / result[j, j];
+                    }
+                }
+            }
+            
+            return result;
+        }
     }
 }
