@@ -14,12 +14,13 @@ namespace BasketOptionPricer
             Console.WriteLine("Choisissez le mode d'utilisation:");
             Console.WriteLine("1. Démonstration automatique (H1 vs H2)");
             Console.WriteLine("2. Interface interactive (saisie manuelle)");
-            Console.WriteLine("3. Quitter");
+            Console.WriteLine("3. Tests unitaires");
+            Console.WriteLine("4. Quitter");
             Console.WriteLine();
             
             while (true)
             {
-                Console.Write("Votre choix (1-3): ");
+                Console.Write("Votre choix (1-4): ");
                 string choice = Console.ReadLine()?.Trim();
                 
                 switch (choice)
@@ -31,10 +32,13 @@ namespace BasketOptionPricer
                         InteractiveInterface.RunInteractiveMode();
                         break;
                     case "3":
+                        RunUnitTests();
+                        break;
+                    case "4":
                         Console.WriteLine("Au revoir !");
                         return;
                     default:
-                        Console.WriteLine("Choix invalide. Veuillez saisir 1, 2 ou 3.");
+                        Console.WriteLine("Choix invalide. Veuillez saisir 1, 2, 3 ou 4.");
                         continue;
                 }
                 
@@ -50,9 +54,26 @@ namespace BasketOptionPricer
                 Console.WriteLine("Choisissez le mode d'utilisation:");
                 Console.WriteLine("1. Démonstration automatique (H1 vs H2)");
                 Console.WriteLine("2. Interface interactive (saisie manuelle)");
-                Console.WriteLine("3. Quitter");
+                Console.WriteLine("3. Tests unitaires");
+                Console.WriteLine("4. Quitter");
                 Console.WriteLine();
             }
+        }
+        
+        static void RunUnitTests()
+        {
+            Console.Clear();
+            Console.WriteLine("════════════════════════════════════════════════════════════════════");
+            Console.WriteLine("                         TESTS UNITAIRES");
+            Console.WriteLine("════════════════════════════════════════════════════════════════════");
+            Console.WriteLine();
+            
+            UnitTests.RunAllTests();
+            
+            Console.WriteLine();
+            Console.WriteLine("════════════════════════════════════════════════════════════════════");
+            Console.WriteLine("                      FIN DES TESTS UNITAIRES");
+            Console.WriteLine("════════════════════════════════════════════════════════════════════");
         }
         
         static void RunDemonstration()
