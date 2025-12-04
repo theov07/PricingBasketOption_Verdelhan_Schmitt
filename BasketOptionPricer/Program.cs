@@ -7,8 +7,59 @@ namespace BasketOptionPricer
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("════════════════════════════════════════════════════════════════════");
+            Console.WriteLine("═══════════════════════════════════════════════════════════════════");
             Console.WriteLine("    PRICING D'OPTIONS SUR PANIER - VERDELHAN & SCHMITT - M2 272");
+            Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+            Console.WriteLine();
+            Console.WriteLine("Choisissez le mode d'utilisation:");
+            Console.WriteLine("1. Démonstration automatique (H1 vs H2)");
+            Console.WriteLine("2. Interface interactive (saisie manuelle)");
+            Console.WriteLine("3. Quitter");
+            Console.WriteLine();
+            
+            while (true)
+            {
+                Console.Write("Votre choix (1-3): ");
+                string choice = Console.ReadLine()?.Trim();
+                
+                switch (choice)
+                {
+                    case "1":
+                        RunDemonstration();
+                        break;
+                    case "2":
+                        InteractiveInterface.RunInteractiveMode();
+                        break;
+                    case "3":
+                        Console.WriteLine("Au revoir !");
+                        return;
+                    default:
+                        Console.WriteLine("Choix invalide. Veuillez saisir 1, 2 ou 3.");
+                        continue;
+                }
+                
+                // Retour au menu principal
+                Console.WriteLine("\nRetour au menu principal...");
+                Console.WriteLine("Appuyez sur une touche pour continuer...");
+                Console.ReadKey();
+                Console.Clear();
+                Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+                Console.WriteLine("    PRICING D'OPTIONS SUR PANIER - VERDELHAN & SCHMITT - M2 272");
+                Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+                Console.WriteLine();
+                Console.WriteLine("Choisissez le mode d'utilisation:");
+                Console.WriteLine("1. Démonstration automatique (H1 vs H2)");
+                Console.WriteLine("2. Interface interactive (saisie manuelle)");
+                Console.WriteLine("3. Quitter");
+                Console.WriteLine();
+            }
+        }
+        
+        static void RunDemonstration()
+        {
+            Console.Clear();
+            Console.WriteLine("════════════════════════════════════════════════════════════════════");
+            Console.WriteLine("                        DÉMONSTRATION AUTOMATIQUE");
             Console.WriteLine("════════════════════════════════════════════════════════════════════");
             Console.WriteLine("Implémentation: Moment Matching (Brigo et al. - sections 3.2-3.3)");
             Console.WriteLine();
