@@ -15,12 +15,13 @@ namespace BasketOptionPricer
             Console.WriteLine("1. Démonstration automatique (H1 vs H2)");
             Console.WriteLine("2. Interface interactive (saisie manuelle)");
             Console.WriteLine("3. Tests unitaires");
-            Console.WriteLine("4. Quitter");
+            Console.WriteLine("4. Tests fonctionnels");
+            Console.WriteLine("5. Quitter");
             Console.WriteLine();
             
             while (true)
             {
-                Console.Write("Votre choix (1-4): ");
+                Console.Write("Votre choix (1-5): ");
                 string choice = Console.ReadLine()?.Trim();
                 
                 switch (choice)
@@ -35,17 +36,27 @@ namespace BasketOptionPricer
                         RunUnitTests();
                         break;
                     case "4":
+                        RunFunctionalTests();
+                        break;
+                    case "5":
                         Console.WriteLine("Au revoir !");
                         return;
                     default:
-                        Console.WriteLine("Choix invalide. Veuillez saisir 1, 2, 3 ou 4.");
+                        Console.WriteLine("Choix invalide. Veuillez saisir 1, 2, 3, 4 ou 5.");
                         continue;
                 }
                 
                 // Retour au menu principal
                 Console.WriteLine("\nRetour au menu principal...");
-                Console.WriteLine("Appuyez sur une touche pour continuer...");
-                Console.ReadKey();
+                if (Environment.UserInteractive && !Console.IsInputRedirected)
+                {
+                    Console.WriteLine("Appuyez sur une touche pour continuer...");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    System.Threading.Thread.Sleep(1000);
+                }
                 Console.Clear();
                 Console.WriteLine("═══════════════════════════════════════════════════════════════════");
                 Console.WriteLine("    PRICING D'OPTIONS SUR PANIER - VERDELHAN & SCHMITT - M2 272");
@@ -55,7 +66,8 @@ namespace BasketOptionPricer
                 Console.WriteLine("1. Démonstration automatique (H1 vs H2)");
                 Console.WriteLine("2. Interface interactive (saisie manuelle)");
                 Console.WriteLine("3. Tests unitaires");
-                Console.WriteLine("4. Quitter");
+                Console.WriteLine("4. Tests fonctionnels");
+                Console.WriteLine("5. Quitter");
                 Console.WriteLine();
             }
         }
@@ -73,6 +85,22 @@ namespace BasketOptionPricer
             Console.WriteLine();
             Console.WriteLine("════════════════════════════════════════════════════════════════════");
             Console.WriteLine("                      FIN DES TESTS UNITAIRES");
+            Console.WriteLine("════════════════════════════════════════════════════════════════════");
+        }
+        
+        static void RunFunctionalTests()
+        {
+            Console.Clear();
+            Console.WriteLine("════════════════════════════════════════════════════════════════════");
+            Console.WriteLine("                        TESTS FONCTIONNELS");
+            Console.WriteLine("════════════════════════════════════════════════════════════════════");
+            Console.WriteLine();
+            
+            FunctionalTests.RunAllTests();
+            
+            Console.WriteLine();
+            Console.WriteLine("════════════════════════════════════════════════════════════════════");
+            Console.WriteLine("                     FIN DES TESTS FONCTIONNELS");
             Console.WriteLine("════════════════════════════════════════════════════════════════════");
         }
         
