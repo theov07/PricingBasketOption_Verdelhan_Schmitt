@@ -1,90 +1,40 @@
-# Basket Option Pricing - Verdelhan & Schmitt
+# Pricing d'Options Basket
 
-## Description
+**Application C# pour calculer le prix d'options sur panier d'actifs**
 
-Application C# pour le pricing d'options basket utilisant les approches H1 (Moment Matching) et H2 (Monte Carlo avec techniques de réduction de variance).
+## Comment l'utiliser
 
-## Structure du Projet
+1. **Installer .NET 9.0**
+2. **Lancer le programme :**
+   ```bash
+   dotnet run
+   ```
+3. **Choisir dans le menu :**
+   - `1` → Calcul rapide (Moment Matching)
+   - `2` → Calcul précis (Monte Carlo) 
+   - `3` → Tests unitaires
+   - `4` → Tests fonctionnels
+   - `5` → Quitter
 
-```
-BasketOptionPricer/
-├── Models/                 # Modèles de données
-│   ├── Asset.cs           # Classe représentant un actif
-│   └── BasketOption.cs    # Classe représentant l'option basket
-├── Pricers/               # Moteurs de calcul
-│   ├── H1MomentMatchingPricer.cs     # Pricer H1 (Moment Matching)
-│   └── H2MonteCarloOptimizedPricer.cs # Pricer H2 (Monte Carlo optimisé)
-├── Utils/                 # Utilitaires
-│   └── MathUtils.cs      # Fonctions mathématiques (CDF normale, etc.)
-├── Interface/            # Interface utilisateur
-│   └── UserInterface.cs  # Gestion des interactions utilisateur
-├── Tests/                # Tests
-│   ├── UnitTests.cs      # Tests unitaires (7 tests)
-│   └── FunctionalTests.cs # Tests fonctionnels (8 tests)
-└── Program.cs            # Point d'entrée principal
-```
-
-## Fonctionnalités
-
-### Méthodes de Pricing
-1. **H1 - Moment Matching** : Méthode analytique basée sur Brigo et al.
-2. **H2 - Monte Carlo Optimisé** : Simulation avec réduction de variance
-
-### Tests
-- **Tests Unitaires** : Validation des composants individuels (100% de réussite)
-- **Tests Fonctionnels** : Validation des scénarios end-to-end (100% de réussite)
-
-## Utilisation
-
-### Compilation
-```bash
-dotnet build
-```
-
-### Exécution
-```bash
-dotnet run
-```
-
-### Menu Principal
-1. **Pricing H1** - Moment Matching (Brigo et al.)
-2. **Pricing H2** - Monte Carlo Optimisé
-3. **Tests Unitaires** - Validation des composants
-4. **Tests Fonctionnels** - Validation des scénarios
-5. **Quitter**
-
-## Tests Disponibles
-
-### Tests Unitaires (7 tests)
-- Test de la fonction CDF normale
-- Test du modèle Black-Scholes
-- Test du pricer Moment Matching
-- Test de construction des modèles
-- Test de validation des paramètres
-
-### Tests Fonctionnels (8 tests)
-- Test basket 2 actifs ATM
-- Test basket 3 actifs OTM
-- Test de convergence H1/H2
-- Test de réduction de variance
-- Test de sensibilité aux paramètres
-
-## Paramètres d'Exemple
+## Exemple simple
 
 ```
-Actif 1: S0=100, σ=0.2, r=0.05
-Actif 2: S0=110, σ=0.25, r=0.05
-Corrélation: ρ=0.3
-Strike: K=105
-Maturité: T=1 an
-Type: Call
+2 actifs : Apple (100€) et Google (110€)
+Option d'achat à 105€ dans 1 an
+→ Prix calculé : ~13.89€
 ```
 
-## Auteurs
+## Fichiers principaux
 
-- Verdelhan
-- Schmitt
+- `Program.cs` → Programme principal
+- `Models/` → Données des actifs et options
+- `Pricers/` → Calculs de prix
+- `Tests/` → Vérifications automatiques
 
-## Version
+## Méthodes
 
-.NET 9.0
+- **H1** : Rapide et précis pour la plupart des cas
+- **H2** : Plus lent mais très précis (1 million de simulations)
+
+---
+*Projet de M2 - Dauphine - Verdelhan & Schmitt*
