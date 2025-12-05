@@ -7,13 +7,13 @@ namespace BasketOptionPricer
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("═══════════════════════════════════════════════════════════════════");
-            Console.WriteLine("    PRICING D'OPTIONS SUR PANIER - VERDELHAN & SCHMITT - M2 272");
-            Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+            // Menu principal du programme
+            Console.WriteLine("Pricing d'Options sur Panier - Verdelhan & Schmitt");
+            Console.WriteLine("=================================================");
             Console.WriteLine();
-            Console.WriteLine("Choisissez le mode d'utilisation:");
-            Console.WriteLine("1. Démonstration automatique (H1 vs H2)");
-            Console.WriteLine("2. Interface interactive (saisie manuelle)");
+            Console.WriteLine("Menu principal:");
+            Console.WriteLine("1. Demo H1 vs H2");
+            Console.WriteLine("2. Mode interactif");
             Console.WriteLine("3. Tests unitaires");
             Console.WriteLine("4. Tests fonctionnels");
             Console.WriteLine("5. Quitter");
@@ -27,16 +27,16 @@ namespace BasketOptionPricer
                 switch (choice)
                 {
                     case "1":
-                        RunDemonstration();
+                        RunDemonstration(); // démo H1 vs H2
                         break;
                     case "2":
-                        InteractiveInterface.RunInteractiveMode();
+                        InteractiveInterface.RunInteractiveMode(); // mode manuel
                         break;
                     case "3":
-                        RunUnitTests();
+                        RunUnitTests(); // tests de base
                         break;
                     case "4":
-                        RunFunctionalTests();
+                        RunFunctionalTests(); // tests complets
                         break;
                     case "5":
                         Console.WriteLine("Au revoir !");

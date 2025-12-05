@@ -2,15 +2,19 @@ using System;
 
 namespace BasketOptionPricer
 {
+    // Fonctions mathematiques utiles
     public static class MathUtils
     {
+        // Fonction de répartition de la loi normale
         public static double NormalCdf(double x)
         {
             return 0.5 * (1.0 + Erf(x / Math.Sqrt(2.0)));
         }
         
+        // Fonction d'erreur avec approximation d'Abramowitz et Stegun
         private static double Erf(double x)
         {
+            // constantes de l'approximation
             double a1 = 0.254829592;
             double a2 = -0.284496736;
             double a3 = 1.421413741;
@@ -27,8 +31,10 @@ namespace BasketOptionPricer
             return sign * y;
         }
         
+        // Formule de Black-Scholes classique
         public static double BlackScholesPrice(double s, double k, double r, double sigma, double t, OptionType optionType)
         {
+            // calcul de d1 et d2
             double d1 = (Math.Log(s / k) + (r + 0.5 * sigma * sigma) * t) / (sigma * Math.Sqrt(t));
             double d2 = d1 - sigma * Math.Sqrt(t);
             
@@ -43,9 +49,7 @@ namespace BasketOptionPricer
             }
         }
         
-        /// <summary>
-        /// Génère un nombre aléatoire suivant une loi normale N(0,1) par Box-Muller
-        /// </summary>
+        // Générateur de nombres aléatoires normaux avec Box-Muller
         public static double GenerateNormalRandom(Random random)
         {
             // Version simplifiée de Box-Muller sans variables static

@@ -2,52 +2,59 @@ using System;
 
 namespace BasketOptionPricer
 {
+    // Pricer H1 - Moment Matching basé sur Brigo et al.
     public class MomentMatchingPricer
     {
         public static double Price(BasketOption option)
         {
             Basket basket = option.Basket;
-            double maturity = option.Maturity;
-            double riskFreeRate = basket.RiskFreeRate;
+            double T = option.Maturity; // je préfère T pour la maturité
+            double r = basket.RiskFreeRate;
             
-            double A0 = basket.GetBasketValue();
-            double M1 = CalculateFirstMoment(basket, maturity);
-            double M2 = CalculateSecondMoment(basket, maturity);
+            // calcul des moments du panier
+            double basketValue = basket.GetBasketValue();
+            double moment1 = CalculateFirstMoment(basket, T);
+            double moment2 = CalculateSecondMoment(basket, T);
             
-            if (M2 <= M1 * M1)
+            // petite correction pour éviter variance négative
+            if (moment2 <= moment1 * moment1)
             {
-                M2 = M1 * M1 * 1.0001;
+                moment2 = moment1 * moment1 * 1.0001; // on ajoute un epsilon
             }
             
-            double sigmaHatSquared = (1.0 / maturity) * Math.Log(M2 / (M1 * M1));
-            double muHat = (1.0 / maturity) * Math.Log(M1 / A0);
-            double sigmaHat = Math.Sqrt(sigmaHatSquared);
+            // paramètres de la lognormale équivalente
+            double sigmaSquared = (1.0 / T) * Math.Log(moment2 / (moment1 * moment1));
+            double mu = (1.0 / T) * Math.Log(moment1 / basketValue);
+            double sigma = Math.Sqrt(sigmaSquared);
             
-            return CalculateOptionPrice(M1, option.Strike, riskFreeRate, sigmaHat, maturity, option.Type);
+            return CalculateOptionPrice(moment1, option.Strike, r, sigma, T, option.Type);
         }
         
-        private static double CalculateFirstMoment(Basket basket, double maturity)
+        // Calcul du premier moment E[B_T]
+        private static double CalculateFirstMoment(Basket basket, double T)
         {
-            double M1 = 0;
+            double resultat = 0;
             
             for (int i = 0; i < basket.Stocks.Count; i++)
             {
-                Stock stock = basket.Stocks[i];
-                double ai = basket.Weights[i];
-                double Si0 = stock.SpotPrice;
-                double qi = stock.DividendRate;
+                Stock actif = basket.Stocks[i];
+                double poids = basket.Weights[i];
+                double S0 = actif.SpotPrice;
+                double q = actif.DividendRate; // dividendes
                 double r = basket.RiskFreeRate;
                 
-                double Fi0 = Si0 * Math.Exp((r - qi) * maturity);
-                M1 += ai * Fi0;
+                // forward price
+                double forward = S0 * Math.Exp((r - q) * T);
+                resultat += poids * forward;
             }
             
-            return M1;
+            return resultat;
         }
         
-        private static double CalculateSecondMoment(Basket basket, double maturity)
+        // Calcul du deuxième moment E[B_T^2] avec correlations
+        private static double CalculateSecondMoment(Basket basket, double T)
         {
-            double M2 = 0;
+            double resultat = 0;
             
             for (int i = 0; i < basket.Stocks.Count; i++)
             {
@@ -67,17 +74,17 @@ namespace BasketOptionPricer
                     double rhoIJ = basket.CorrelationMatrix[i, j];
                     double r = basket.RiskFreeRate;
                     
-                    double Fi0 = Si0 * Math.Exp((r - qi) * maturity);
-                    double Fj0 = Sj0 * Math.Exp((r - qj) * maturity);
+                    double Fi0 = Si0 * Math.Exp((r - qi) * T);
+                    double Fj0 = Sj0 * Math.Exp((r - qj) * T);
                     
-                    double integralSigmaIJ = sigmaI * sigmaJ * maturity;
+                    double integralSigmaIJ = sigmaI * sigmaJ * T;
                     double covarianceTerm = Math.Exp(rhoIJ * integralSigmaIJ);
                     
-                    M2 += ai * aj * Fi0 * Fj0 * covarianceTerm;
+                    resultat += ai * aj * Fi0 * Fj0 * covarianceTerm;
                 }
             }
             
-            return M2;
+            return resultat;
         }
         
         private static double CalculateOptionPrice(double M1, double strike, double riskFreeRate, double sigmaHat, double maturity, OptionType optionType)

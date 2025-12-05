@@ -3,28 +3,26 @@ using System.Collections.Generic;
 
 namespace BasketOptionPricer
 {
-    /// <summary>
-    /// Tests unitaires essentiels pour le projet de pricing d'options sur panier
-    /// </summary>
+    // Tests unitaires pour vérifier que tout marche bien
     public static class UnitTests
     {
         public static void RunAllTests()
         {
-            Console.WriteLine("🧪 TESTS UNITAIRES ESSENTIELS");
-            Console.WriteLine("═══════════════════════════════");
+            Console.WriteLine("Tests Unitaires");
+            Console.WriteLine("===============");
             
             var tests = new Dictionary<string, Func<bool>>
             {
-                { "Math Utils - Normal CDF", TestNormalCdf },
-                { "Math Utils - Black-Scholes", TestBlackScholes },
-                { "Stock Construction", TestStockConstruction },
-                { "Basket Construction", TestBasketConstruction },
-                { "Moment Matching Pricer", TestMomentMatchingPricer },
-                { "H2 Models", TestH2Models },
-                { "Pricing Consistency", TestPricingConsistency }
+                { "Test CDF normale", TestNormalCdf },
+                { "Test Black-Scholes", TestBlackScholes },
+                { "Construction Stock", TestStockConstruction },
+                { "Construction Basket", TestBasketConstruction },
+                { "Pricer Moment Matching", TestMomentMatchingPricer },
+                { "Modèles H2", TestH2Models },
+                { "Cohérence Pricing", TestPricingConsistency }
             };
             
-            int passed = 0;
+            int reussis = 0;
             int total = tests.Count;
             
             foreach (var test in tests)
@@ -34,23 +32,27 @@ namespace BasketOptionPricer
                 {
                     if (test.Value())
                     {
-                        Console.WriteLine("✅ RÉUSSI");
-                        passed++;
+                        Console.WriteLine("OK");
+                        reussis++;
                     }
                     else
                     {
-                        Console.WriteLine("❌ ÉCHOUÉ");
+                        Console.WriteLine("ECHEC");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"❌ ERREUR: {ex.Message}");
+                    Console.WriteLine($"ERREUR: {ex.Message}");
                 }
             }
             
             Console.WriteLine();
-            Console.WriteLine($"Résumé: {passed}/{total} tests réussis ({passed * 100.0 / total:F1}%)");
-            Console.WriteLine(passed == total ? "✅ TOUS LES TESTS SONT PASSÉS" : "❌ CERTAINS TESTS ONT ÉCHOUÉ");
+            Console.WriteLine($"Résultats: {reussis}/{total} tests réussis");
+            
+            if (reussis == total)
+                Console.WriteLine("Tous les tests OK !");
+            else
+                Console.WriteLine("Certains tests ont échoué");
         }
         
         private static bool TestNormalCdf()
