@@ -63,7 +63,7 @@ namespace BasketOptionPricer
             
             double[] weights = { 0.5, 0.5 };
             double[,] correlation = { { 1.0, 0.3 }, { 0.3, 1.0 } };
-            var basket = new Basket(stocks, weights, correlation, 0.03);
+            var basket = new Basket(stocks, weights, correlation, 0.01933); // €STR BCE 23/01/2026
             
             double basketValue = basket.GetBasketValue(); // 110.0
             var callOption = new BasketOption(basket, OptionType.Call, basketValue, 1.0);
@@ -97,7 +97,7 @@ namespace BasketOptionPricer
                 { 0.2, 0.3, 1.0 }
             };
             
-            var basket = new Basket(stocks, weights, correlation, 0.04);
+            var basket = new Basket(stocks, weights, correlation, 0.01933); // €STR BCE
             var option = new BasketOption(basket, OptionType.Call, basket.GetBasketValue() * 1.1, 1.5);
             
             double price = MomentMatchingPricer.Price(option);
@@ -111,12 +111,12 @@ namespace BasketOptionPricer
             // Test de convergence H2 vers H1 avec paramètres constants
             var stockH1 = new Stock("Test", 100.0, 0.20, 0.02);
             var basketH1 = new Basket(new List<Stock> { stockH1 }, new double[] { 1.0 }, 
-                                    new double[,] { { 1.0 } }, 0.03);
+                                    new double[,] { { 1.0 } }, 0.01933); // €STR BCE
             var optionH1 = new BasketOption(basketH1, OptionType.Call, 105.0, 1.0);
             
-            // H2 avec paramètres constants équivalents
+            // H2 avec paramètres constants équivalents (€STR 1.933%)
             var volModel = new DeterministicVolatilityModel(0.20);
-            var rateModel = new DeterministicRateModel(0.03);
+            var rateModel = new DeterministicRateModel(0.01933);
             var stockH2 = new StockH2("Test", 100.0, volModel, 0.02);
             var basketH2 = new BasketH2(new List<StockH2> { stockH2 }, new double[] { 1.0 }, 
                                       new double[,] { { 1.0 } }, rateModel);
@@ -135,7 +135,7 @@ namespace BasketOptionPricer
             // Comparaison Monte Carlo vs Moment Matching
             var vol1 = new DeterministicVolatilityModel(0.20);
             var vol2 = new DeterministicVolatilityModel(0.25);
-            var rateModel = new DeterministicRateModel(0.03);
+            var rateModel = new DeterministicRateModel(0.01933); // €STR BCE
             
             var stocksH2 = new List<StockH2>
             {
@@ -163,7 +163,7 @@ namespace BasketOptionPricer
         {
             // Test de réduction de variance Monte Carlo
             var vol = new DeterministicVolatilityModel(0.20);
-            var rateModel = new DeterministicRateModel(0.03);
+            var rateModel = new DeterministicRateModel(0.01933); // €STR BCE
             var stockH2 = new StockH2("Test", 100.0, vol, 0.02);
             
             var basketH2 = new BasketH2(new List<StockH2> { stockH2 }, new double[] { 1.0 }, 
@@ -192,13 +192,13 @@ namespace BasketOptionPricer
             
             // Corrélation faible
             double[,] corrLow = { { 1.0, 0.1 }, { 0.1, 1.0 } };
-            var basketLow = new Basket(stocks, weights, corrLow, 0.03);
+            var basketLow = new Basket(stocks, weights, corrLow, 0.01933); // €STR BCE
             var optionLow = new BasketOption(basketLow, OptionType.Call, 100.0, 1.0);
             double priceLow = MomentMatchingPricer.Price(optionLow);
             
             // Corrélation élevée
             double[,] corrHigh = { { 1.0, 0.9 }, { 0.9, 1.0 } };
-            var basketHigh = new Basket(stocks, weights, corrHigh, 0.03);
+            var basketHigh = new Basket(stocks, weights, corrHigh, 0.01933); // €STR BCE
             var optionHigh = new BasketOption(basketHigh, OptionType.Call, 100.0, 1.0);
             double priceHigh = MomentMatchingPricer.Price(optionHigh);
             
@@ -223,8 +223,8 @@ namespace BasketOptionPricer
             var optionH2 = new BasketOptionH2(basketH2, OptionType.Call, 105.0, 1.0);
             double price = MomentMatchingPricerH2.Price(optionH2);
             
-            // Comparaison avec paramètres constants
-            var constantRate = new DeterministicRateModel(0.03);
+            // Comparaison avec paramètres constants (€STR)
+            var constantRate = new DeterministicRateModel(0.01933);
             var constantVol = new DeterministicVolatilityModel(0.20);
             var stockConstant = new StockH2("Test", 100.0, constantVol, 0.02);
             var basketConstant = new BasketH2(new List<StockH2> { stockConstant }, new double[] { 1.0 }, 
@@ -243,7 +243,7 @@ namespace BasketOptionPricer
                 new Stock("Test", 100.0, 0.20, 0.02)
             };
             
-            var basket = new Basket(stocks, new double[] { 1.0 }, new double[,] { { 1.0 } }, 0.03);
+            var basket = new Basket(stocks, new double[] { 1.0 }, new double[,] { { 1.0 } }, 0.01933); // €STR BCE
             
             // Options ATM
             var callATM = new BasketOption(basket, OptionType.Call, 100.0, 1.0);

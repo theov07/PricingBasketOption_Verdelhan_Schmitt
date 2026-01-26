@@ -60,9 +60,7 @@ namespace BasketOptionPricer
             return z0;
         }
         
-        /// <summary>
         /// Décomposition de Cholesky d'une matrice de corrélation
-        /// </summary>
         public static double[,] CholeskyDecomposition(double[,] matrix)
         {
             int n = matrix.GetLength(0);

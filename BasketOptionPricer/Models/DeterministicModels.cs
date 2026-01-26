@@ -4,9 +4,7 @@ using System.Linq;
 
 namespace BasketOptionPricer
 {
-    /// <summary>
-    /// Représente une courbe de taux d'intérêt déterministe r(t)
-    /// </summary>
+
     public class DeterministicRateModel
     {
         private readonly List<(double time, double rate)> _ratePoints;
@@ -25,18 +23,12 @@ namespace BasketOptionPricer
             };
         }
         
-        /// <summary>
-        /// Ajoute un point (temps, taux) à la courbe
-        /// </summary>
         public void AddRatePoint(double time, double rate)
         {
             _ratePoints.Add((time, rate));
             _ratePoints.Sort((a, b) => a.time.CompareTo(b.time));
         }
         
-        /// <summary>
-        /// Retourne le taux instantané r(t) par interpolation linéaire
-        /// </summary>
         public double GetRate(double time)
         {
             if (_ratePoints.Count == 0)
@@ -64,10 +56,6 @@ namespace BasketOptionPricer
             return _ratePoints.Last().rate;
         }
         
-        /// <summary>
-        /// Calcule l'intégrale ∫₀ᵀ r(s) ds pour l'actualisation
-        /// Utilise la règle des trapèzes pour l'intégration numérique
-        /// </summary>
         public double IntegrateRate(double T, int numSteps = 1000)
         {
             if (T <= 0) return 0.0;
@@ -89,18 +77,12 @@ namespace BasketOptionPricer
             return integral;
         }
         
-        /// <summary>
-        /// Calcule le facteur d'actualisation exp(-∫₀ᵀ r(s) ds)
-        /// </summary>
         public double GetDiscountFactor(double T)
         {
             return Math.Exp(-IntegrateRate(T));
         }
     }
     
-    /// <summary>
-    /// Représente une volatilité déterministe σᵢ(t) pour un actif
-    /// </summary>
     public class DeterministicVolatilityModel
     {
         private readonly List<(double time, double volatility)> _volPoints;
@@ -119,18 +101,12 @@ namespace BasketOptionPricer
             };
         }
         
-        /// <summary>
-        /// Ajoute un point (temps, volatilité) à la courbe
-        /// </summary>
         public void AddVolatilityPoint(double time, double volatility)
         {
             _volPoints.Add((time, volatility));
             _volPoints.Sort((a, b) => a.time.CompareTo(b.time));
         }
         
-        /// <summary>
-        /// Retourne la volatilité instantanée σ(t) par interpolation linéaire
-        /// </summary>
         public double GetVolatility(double time)
         {
             if (_volPoints.Count == 0)
@@ -158,9 +134,6 @@ namespace BasketOptionPricer
             return _volPoints.Last().volatility;
         }
         
-        /// <summary>
-        /// Calcule ∫₀ᵀ σ²(s) ds pour les calculs de moments
-        /// </summary>
         public double IntegrateVariance(double T, int numSteps = 1000)
         {
             if (T <= 0) return 0.0;

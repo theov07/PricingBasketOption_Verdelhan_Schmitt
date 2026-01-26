@@ -118,7 +118,7 @@ namespace BasketOptionPricer
                 
                 double[] weights = { 0.6, 0.4 };
                 double[,] correlation = { { 1.0, 0.3 }, { 0.3, 1.0 } };
-                double riskFreeRate = 0.03;
+                double riskFreeRate = 0.01933; // €STR BCE 23/01/2026
                 
                 var basket = new Basket(stocks, weights, correlation, riskFreeRate);
                 
@@ -140,7 +140,7 @@ namespace BasketOptionPricer
             {
                 var stock = new Stock("Test", 100.0, 0.20, 0.02);
                 var basket = new Basket(new List<Stock> { stock }, new double[] { 1.0 }, 
-                                      new double[,] { { 1.0 } }, 0.03);
+                                      new double[,] { { 1.0 } }, 0.01933); // €STR BCE
                 
                 var callOption = new BasketOption(basket, OptionType.Call, 105.0, 1.0);
                 var putOption = new BasketOption(basket, OptionType.Put, 95.0, 1.0);
@@ -205,7 +205,7 @@ namespace BasketOptionPricer
                 
                 double[] weights = { 0.5, 0.5 };
                 double[,] correlation = { { 1.0, 0.4 }, { 0.4, 1.0 } };
-                var basket = new Basket(stocks, weights, correlation, 0.03);
+                var basket = new Basket(stocks, weights, correlation, 0.01933); // €STR BCE
                 
                 // Test avec différents strikes
                 var atmCall = new BasketOption(basket, OptionType.Call, basket.GetBasketValue(), 1.0);

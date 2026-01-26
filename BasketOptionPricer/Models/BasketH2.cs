@@ -4,9 +4,7 @@ using System.Linq;
 
 namespace BasketOptionPricer
 {
-    /// <summary>
-    /// Représente un actif avec volatilité déterministe pour l'approche H2
-    /// </summary>
+
     public class StockH2
     {
         public string Name { get; }
@@ -22,18 +20,12 @@ namespace BasketOptionPricer
             DividendRate = dividendRate >= 0 ? dividendRate : throw new ArgumentException("Le taux de dividende doit être positif", nameof(dividendRate));
         }
         
-        /// <summary>
-        /// Constructeur pour volatilité constante (compatibilité H1)
-        /// </summary>
         public StockH2(string name, double spotPrice, double constantVolatility, double dividendRate)
             : this(name, spotPrice, new DeterministicVolatilityModel(constantVolatility), dividendRate)
         {
         }
     }
     
-    /// <summary>
-    /// Panier d'actions avec paramètres déterministes pour l'approche H2
-    /// </summary>
     public class BasketH2
     {
         public List<StockH2> Stocks { get; }
@@ -51,9 +43,6 @@ namespace BasketOptionPricer
             ValidateInputs();
         }
         
-        /// <summary>
-        /// Constructeur pour taux constant (compatibilité H1)
-        /// </summary>
         public BasketH2(List<StockH2> stocks, double[] weights, double[,] correlationMatrix, double constantRate)
             : this(stocks, weights, correlationMatrix, new DeterministicRateModel(constantRate))
         {
@@ -90,10 +79,7 @@ namespace BasketOptionPricer
                 }
             }
         }
-        
-        /// <summary>
-        /// Calcule la valeur actuelle du panier
-        /// </summary>
+
         public double GetBasketValue()
         {
             double value = 0;
@@ -105,9 +91,6 @@ namespace BasketOptionPricer
         }
     }
     
-    /// <summary>
-    /// Option sur panier avec paramètres déterministes pour l'approche H2
-    /// </summary>
     public class BasketOptionH2
     {
         public BasketH2 Basket { get; }
@@ -123,9 +106,6 @@ namespace BasketOptionPricer
             Maturity = maturity > 0 ? maturity : throw new ArgumentException("La maturité doit être positive", nameof(maturity));
         }
         
-        /// <summary>
-        /// Calcule le payoff de l'option pour une valeur donnée du panier
-        /// </summary>
         public double CalculatePayoff(double basketValue)
         {
             return Type switch

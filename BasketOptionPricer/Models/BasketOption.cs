@@ -2,7 +2,6 @@ using System;
 
 namespace BasketOptionPricer
 {
-    // Types d'options possibles
     public enum OptionType
     {
         Call,

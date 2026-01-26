@@ -145,7 +145,8 @@ namespace BasketOptionPricer
                 { 0.2, 0.4, 1.0 }
             };
             
-            var basket = new Basket(stocks, weights, correlation, 0.03);
+            // Taux €STR BCE au 23/01/2026 : 1.933%
+            var basket = new Basket(stocks, weights, correlation, 0.01933);
             double basketValue = basket.GetBasketValue();
             
             var callOption = new BasketOption(basket, OptionType.Call, basketValue * 1.05, 1.0);
@@ -175,11 +176,11 @@ namespace BasketOptionPricer
             Console.WriteLine("🔷 APPROCHE H2 : Paramètres déterministes (r(t), σ(t))");
             Console.WriteLine("──────────────────────────────────────────────────────");
             
-            // Courbe de taux déterministe
+            // Courbe de taux €STR BCE au 23/01/2026 : 1.933% (constant pour simplification)
             var rateModel = new DeterministicRateModel();
-            rateModel.AddRatePoint(0.0, 0.025);  // 2.5% à t=0
-            rateModel.AddRatePoint(0.5, 0.030);  // 3.0% à t=0.5
-            rateModel.AddRatePoint(1.0, 0.035);  // 3.5% à t=1
+            rateModel.AddRatePoint(0.0, 0.01933);  // €STR à t=0
+            rateModel.AddRatePoint(0.5, 0.01933);  // €STR à t=0.5
+            rateModel.AddRatePoint(1.0, 0.01933);  // €STR à t=1
             
             Console.WriteLine("Courbe de taux r(t):");
             Console.WriteLine($"├─ r(0) = {rateModel.GetRate(0.0):P2}");
@@ -244,11 +245,11 @@ namespace BasketOptionPricer
             
             var singleStock = new Stock("Test", 100.0, 0.20, 0.02);
             var singleBasket = new Basket(new List<Stock> { singleStock }, new double[] { 1.0 }, 
-                                        new double[,] { { 1.0 } }, 0.03);
+                                        new double[,] { { 1.0 } }, 0.01933);
             var testCall = new BasketOption(singleBasket, OptionType.Call, 100.0, 1.0);
             
             double mmPrice = MomentMatchingPricer.Price(testCall);
-            double bsPrice = MathUtils.BlackScholesPrice(100.0, 100.0, 0.03 - 0.02, 0.20, 1.0, OptionType.Call);
+            double bsPrice = MathUtils.BlackScholesPrice(100.0, 100.0, 0.01933 - 0.02, 0.20, 1.0, OptionType.Call);
             
             Console.WriteLine($"├─ Moment Matching: {mmPrice:F6} €");
             Console.WriteLine($"├─ Black-Scholes:   {bsPrice:F6} €");
@@ -262,13 +263,13 @@ namespace BasketOptionPricer
             // H1
             var stockH1 = new Stock("Test", 100.0, 0.20, 0.02);
             var basketH1 = new Basket(new List<Stock> { stockH1 }, new double[] { 1.0 }, 
-                                    new double[,] { { 1.0 } }, 0.03);
+                                    new double[,] { { 1.0 } }, 0.01933);
             var optionH1 = new BasketOption(basketH1, OptionType.Call, 105.0, 1.0);
             
-            // H2 avec paramètres équivalents constants
+            // H2 avec paramètres équivalents constants (€STR 1.933%)
             var stockH2 = new StockH2("Test", 100.0, 0.20, 0.02);
             var basketH2 = new BasketH2(new List<StockH2> { stockH2 }, new double[] { 1.0 }, 
-                                      new double[,] { { 1.0 } }, 0.03);
+                                      new double[,] { { 1.0 } }, 0.01933);
             var optionH2 = new BasketOptionH2(basketH2, OptionType.Call, 105.0, 1.0);
             
             double priceH1 = MomentMatchingPricer.Price(optionH1);
