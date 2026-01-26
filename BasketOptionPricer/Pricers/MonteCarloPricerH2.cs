@@ -2,9 +2,7 @@ using System;
 
 namespace BasketOptionPricer
 {
-    /// <summary>
     /// Résultat d'une simulation Monte Carlo avec information sur la variance
-    /// </summary>
     public class MonteCarloResultH2
     {
         public double Price { get; set; }
@@ -14,9 +12,7 @@ namespace BasketOptionPricer
         public double VarianceReduction { get; set; } = 0.0;
     }
     
-    /// <summary>
     /// Pricer Monte Carlo pour l'approche H2 avec paramètres déterministes
-    /// </summary>
     public class MonteCarloPricerH2
     {
         private readonly Random _random;
@@ -28,9 +24,7 @@ namespace BasketOptionPricer
             _random = new Random(seed);
         }
         
-        /// <summary>
         /// Price l'option par Monte Carlo avec paramètres déterministes
-        /// </summary>
         public MonteCarloResultH2 Price(BasketOptionH2 option, int numSimulations = 100000, bool useControlVariate = false)
         {
             BasketH2 basket = option.Basket;
@@ -81,7 +75,6 @@ namespace BasketOptionPricer
                 sum += discountedPayoff;
                 sumSquared += discountedPayoff * discountedPayoff;
                 
-                // Variable de contrôle si demandée
                 if (useControlVariate)
                 {
                     double controlValue = CalculateControlVariate(basket, finalPrices, option.Strike, option.Type);
@@ -112,15 +105,11 @@ namespace BasketOptionPricer
             
             return result;
         }
-        
-        /// <summary>
-        /// Simule les chemins des prix avec paramètres déterministes
-        /// Utilise discrétisation d'Euler avec pas de temps adaptatif
-        /// </summary>
+
         private double[] SimulatePaths(BasketH2 basket, double[] randomNumbers, double maturity)
         {
             int numAssets = basket.Stocks.Count;
-            int numSteps = Math.Max(252, (int)(maturity * 365)); // Au moins 1 pas par jour
+            int numSteps = Math.Max(252, (int)(maturity * 365));
             double dt = maturity / numSteps;
             
             double[] prices = new double[numAssets];
@@ -160,9 +149,7 @@ namespace BasketOptionPricer
             return prices;
         }
         
-        /// <summary>
         /// Génère des nombres aléatoires corrélés par décomposition de Cholesky
-        /// </summary>
         private double[] GenerateCorrelatedRandomNumbers(double[,] choleskyMatrix, int numAssets)
         {
             double[] independentRandom = new double[numAssets];
@@ -187,9 +174,7 @@ namespace BasketOptionPricer
             return correlatedRandom;
         }
         
-        /// <summary>
         /// Calcule la variable de contrôle (moyenne géométrique du panier)
-        /// </summary>
         private double CalculateControlVariate(BasketH2 basket, double[] finalPrices, double strike, OptionType optionType)
         {
             // Utilise la moyenne géométrique comme variable de contrôle
@@ -207,9 +192,7 @@ namespace BasketOptionPricer
             };
         }
         
-        /// <summary>
         /// Applique la réduction de variance par variable de contrôle
-        /// </summary>
         private void ApplyControlVariateReduction(MonteCarloResultH2 result, double sum, 
             double controlVariateSum, double controlVariateSumSquared, 
             double covarianceSum, int numSimulations)
@@ -218,7 +201,7 @@ namespace BasketOptionPricer
             double controlVariance = controlVariateSumSquared / numSimulations - controlMean * controlMean;
             double covariance = covarianceSum / numSimulations - result.Price * controlMean;
             
-            if (controlVariance > 1e-10) // Éviter division par zéro
+            if (controlVariance > 1e-10)
             {
                 double beta = covariance / controlVariance;
                 double adjustedPrice = result.Price - beta * controlMean;
@@ -226,7 +209,7 @@ namespace BasketOptionPricer
                 
                 result.ControlVariateAdjustment = adjustedPrice - result.Price;
                 result.Price = adjustedPrice;
-                result.VarianceReduction = varianceReduction / result.Variance * 100; // En pourcentage
+                result.VarianceReduction = varianceReduction / result.Variance * 100;
                 result.Variance = Math.Max(result.Variance - varianceReduction, 0);
                 result.StandardError = Math.Sqrt(result.Variance / numSimulations);
             }

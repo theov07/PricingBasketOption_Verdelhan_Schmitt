@@ -8,7 +8,7 @@ namespace BasketOptionPricer
         public static double Price(BasketOption option)
         {
             Basket basket = option.Basket;
-            double T = option.Maturity; // je préfère T pour la maturité
+            double T = option.Maturity;
             double r = basket.RiskFreeRate;
             
             // calcul des moments du panier
@@ -16,10 +16,9 @@ namespace BasketOptionPricer
             double moment1 = CalculateFirstMoment(basket, T);
             double moment2 = CalculateSecondMoment(basket, T);
             
-            // petite correction pour éviter variance négative
             if (moment2 <= moment1 * moment1)
             {
-                moment2 = moment1 * moment1 * 1.0001; // on ajoute un epsilon
+                moment2 = moment1 * moment1 * 1.0001;
             }
             
             // paramètres de la lognormale équivalente
@@ -40,7 +39,7 @@ namespace BasketOptionPricer
                 Stock actif = basket.Stocks[i];
                 double poids = basket.Weights[i];
                 double S0 = actif.SpotPrice;
-                double q = actif.DividendRate; // dividendes
+                double q = actif.DividendRate;
                 double r = basket.RiskFreeRate;
                 
                 // forward price

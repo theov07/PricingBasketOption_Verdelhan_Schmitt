@@ -3,9 +3,7 @@ using System.Collections.Generic;
 
 namespace BasketOptionPricer
 {
-    /// <summary>
-    /// Tests fonctionnels pour valider les scénarios end-to-end du projet
-    /// </summary>
+    /// Tests fonctionnels pour valider les scénarios
     public static class FunctionalTests
     {
         public static void RunAllTests()
@@ -78,7 +76,7 @@ namespace BasketOptionPricer
             return callPrice > 0 && putPrice > 0 && 
                    callPrice > putPrice && // Call ATM > Put ATM avec r > 0
                    callPrice < basketValue && // Call < Spot
-                   Math.Abs(callPrice - putPrice) < basketValue * 0.2; // Différence raisonnable
+                   Math.Abs(callPrice - putPrice) < basketValue * 0.2;
         }
         
         private static bool TestThreeAssetDiversified()
@@ -105,7 +103,7 @@ namespace BasketOptionPricer
             double price = MomentMatchingPricer.Price(option);
             
             // Test de cohérence avec option OTM
-            return price > 0 && price < basket.GetBasketValue() * 0.3; // Prix raisonnable pour OTM
+            return price > 0 && price < basket.GetBasketValue() * 0.3;
         }
         
         private static bool TestH1H2Convergence()
@@ -129,7 +127,7 @@ namespace BasketOptionPricer
             
             double relativeError = Math.Abs(priceH1 - priceH2) / priceH1 * 100;
             
-            return relativeError < 1.0; // Erreur relative < 1%
+            return relativeError < 1.0;
         }
         
         private static bool TestMonteCarloVsMomentMatching()
@@ -158,7 +156,7 @@ namespace BasketOptionPricer
             
             double relativeError = Math.Abs(mmPrice - mcResult.Price) / mmPrice * 100;
             
-            return relativeError < 5.0 && mcResult.StandardError < 0.1; // Erreur < 5% et précision MC correcte
+            return relativeError < 5.0 && mcResult.StandardError < 0.1;
         }
         
         private static bool TestVarianceReduction()
@@ -178,7 +176,7 @@ namespace BasketOptionPricer
             
             // La réduction de variance doit diminuer l'erreur standard
             return resultWithCV.StandardError < resultStandard.StandardError &&
-                   resultWithCV.VarianceReduction > 30.0; // Au moins 30% de réduction
+                   resultWithCV.VarianceReduction > 30.0;
         }
         
         private static bool TestCorrelationSensitivity()
@@ -204,8 +202,7 @@ namespace BasketOptionPricer
             var optionHigh = new BasketOption(basketHigh, OptionType.Call, 100.0, 1.0);
             double priceHigh = MomentMatchingPricer.Price(optionHigh);
             
-            // Corrélation élevée -> volatilité du panier plus élevée -> prix d'option plus élevé
-            return priceHigh > priceLow && (priceHigh - priceLow) / priceLow > 0.05; // Au moins 5% de différence
+            return priceHigh > priceLow && (priceHigh - priceLow) / priceLow > 0.05;
         }
         
         private static bool TestDeterministicParametersH2()
@@ -235,8 +232,7 @@ namespace BasketOptionPricer
             var optionConstant = new BasketOptionH2(basketConstant, OptionType.Call, 105.0, 1.0);
             double priceConstant = MomentMatchingPricerH2.Price(optionConstant);
             
-            // Les prix doivent être différents (impact des paramètres déterministes)
-            return Math.Abs(price - priceConstant) / priceConstant > 0.01; // Au moins 1% de différence
+            return Math.Abs(price - priceConstant) / priceConstant > 0.01;
         }
         
         private static bool TestPutCallRelationship()
