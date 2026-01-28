@@ -138,3 +138,46 @@ Mode Release pour les performances
 Simulations MC : 100K-1M selon précision souhaitée
 Graine aléatoire : 12345 (pour reproductibilité)
 ```
+
+---
+
+## 6. Surface de Volatilité Implicite (Bloomberg OVDV)
+
+### Source des données
+| Élément | Valeur |
+|---------|--------|
+| **Sous-jacent** | SX5E (Euro Stoxx 50) |
+| **Source** | Bloomberg OVDV Mid |
+| **Date de valorisation** | 28 janvier 2026 |
+| **Fichier** | `SX5E_OVDV_2026-01-28_MID.csv` |
+| **Format** | valuation_date, expiry_date, forward, moneyness, implied_vol |
+
+### Maturités disponibles
+| Expiry | T (années) | Vol ATM |
+|--------|------------|---------|
+| 2026-01-29 | 0.003 | 19.57% |
+| 2026-02-02 | 0.014 | 13.07% |
+| 2026-02-10 | 0.036 | 13.38% |
+| 2026-03-06 | 0.101 | 14.47% |
+| 2026-04-28 | 0.247 | 15.09% |
+| 2026-06-19 | 0.389 | 15.63% |
+
+### Utilisation dans le code
+```csharp
+using BasketOptionPricer.Data;
+
+// Chargement de la surface
+var surface = VolSurfaceFromCsv.LoadFromCsv("SX5E_OVDV_2026-01-28_MID.csv", "SX5E");
+surface.PrintSummary();
+
+// Interpolation bilinéaire (T, moneyness)
+double vol = surface.GetVolByMoneyness(0.25, 1.0);  // T=3 mois, ATM
+
+// Ou par strike/forward
+double vol2 = surface.GetVolByStrike(0.25, 6000, 5990);
+```
+
+### Conventions
+- **Moneyness** = K / Forward (convention Bloomberg)
+- **Interpolation** : bilinéaire (d'abord en moneyness, puis en T)
+- **Extrapolation** : plate aux bords (clamping)
