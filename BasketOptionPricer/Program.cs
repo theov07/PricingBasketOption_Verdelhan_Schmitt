@@ -8,21 +8,21 @@ namespace BasketOptionPricer
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Pricing d'Options sur Panier - Verdelhan & Schmitt");
-            Console.WriteLine("=================================================");
+            Console.WriteLine("Basket Option Pricing - Verdelhan & Schmitt");
+            Console.WriteLine("===========================================");
             Console.WriteLine();
-            Console.WriteLine("Menu principal:");
+            Console.WriteLine("Main menu:");
             Console.WriteLine("1. Demo H1 vs H2");
-            Console.WriteLine("2. Mode interactif");
-            Console.WriteLine("3. Tests unitaires");
-            Console.WriteLine("4. Tests fonctionnels");
-            Console.WriteLine("5. Test Surface Vol (Bloomberg OVDV)");
-            Console.WriteLine("6. Quitter");
+            Console.WriteLine("2. Interactive mode");
+            Console.WriteLine("3. Unit tests");
+            Console.WriteLine("4. Functional tests");
+            Console.WriteLine("5. Vol Surface Test (Bloomberg OVDV)");
+            Console.WriteLine("6. Exit");
             Console.WriteLine();
             
             while (true)
             {
-                Console.Write("Votre choix (1-6): ");
+                Console.Write("Your choice (1-6): ");
                 string choice = Console.ReadLine()?.Trim();
                 
                 switch (choice)
@@ -43,17 +43,17 @@ namespace BasketOptionPricer
                         TestVolSurface();
                         break;
                     case "6":
-                        Console.WriteLine("Au revoir !");
+                        Console.WriteLine("Goodbye!");
                         return;
                     default:
-                        Console.WriteLine("Choix invalide.");
+                        Console.WriteLine("Invalid choice.");
                         continue;
                 }
                 
-                Console.WriteLine("\nRetour au menu principal...");
+                Console.WriteLine("\nReturning to main menu...");
                 if (Environment.UserInteractive && !Console.IsInputRedirected)
                 {
-                    Console.WriteLine("Appuyez sur une touche pour continuer...");
+                    Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
                 }
                 else
@@ -62,16 +62,16 @@ namespace BasketOptionPricer
                 }
                 Console.Clear();
                 Console.WriteLine("═══════════════════════════════════════════════════════════════════");
-                Console.WriteLine("    PRICING D'OPTIONS SUR PANIER - VERDELHAN & SCHMITT - M2 272");
+                Console.WriteLine("       BASKET OPTION PRICING - VERDELHAN & SCHMITT - M2 272");
                 Console.WriteLine("═══════════════════════════════════════════════════════════════════");
                 Console.WriteLine();
-                Console.WriteLine("Choisissez le mode d'utilisation:");
-                Console.WriteLine("1. Démonstration automatique (H1 vs H2)");
-                Console.WriteLine("2. Interface interactive (saisie manuelle)");
-                Console.WriteLine("3. Tests unitaires");
-                Console.WriteLine("4. Tests fonctionnels");
-                Console.WriteLine("5. Test Surface Vol (Bloomberg OVDV)");
-                Console.WriteLine("6. Quitter");
+                Console.WriteLine("Choose usage mode:");
+                Console.WriteLine("1. Automatic demonstration (H1 vs H2)");
+                Console.WriteLine("2. Interactive interface (manual input)");
+                Console.WriteLine("3. Unit tests");
+                Console.WriteLine("4. Functional tests");
+                Console.WriteLine("5. Vol Surface Test (Bloomberg OVDV)");
+                Console.WriteLine("6. Exit");
                 Console.WriteLine();
             }
         }
@@ -80,7 +80,7 @@ namespace BasketOptionPricer
         {
             Console.Clear();
             Console.WriteLine("════════════════════════════════════════════════════════════════════");
-            Console.WriteLine("          TEST SURFACE DE VOLATILITÉ - BLOOMBERG OVDV");
+            Console.WriteLine("          VOLATILITY SURFACE TEST - BLOOMBERG OVDV");
             Console.WriteLine("════════════════════════════════════════════════════════════════════\n");
 
             string csvPath = "../ SX5E_OVDV_2026-01-28_MID.csv";
@@ -110,12 +110,12 @@ namespace BasketOptionPricer
                 double testVol = surface.GetVolByStrike(0.25, 6000, 5990);
                 Console.WriteLine($"  GetVolByStrike(T=0.25, K=6000, F=5990) = {testVol * 100:F2}%");
 
-                Console.WriteLine("\n✓ Surface chargée et interpolation OK");
+                Console.WriteLine("\n✓ Surface loaded and interpolation OK");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur: {ex.Message}");
-                Console.WriteLine($"Vérifiez que le fichier {csvPath} existe.");
+                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine($"Check that file {csvPath} exists.");
             }
 
             Console.WriteLine("\n════════════════════════════════════════════════════════════════════");
@@ -125,7 +125,7 @@ namespace BasketOptionPricer
         {
             Console.Clear();;
             Console.WriteLine("════════════════════════════════════════════════════════════════════");
-            Console.WriteLine("                         TESTS UNITAIRES");
+            Console.WriteLine("                           UNIT TESTS");
             Console.WriteLine("════════════════════════════════════════════════════════════════════");
             Console.WriteLine();
             
@@ -133,7 +133,7 @@ namespace BasketOptionPricer
             
             Console.WriteLine();
             Console.WriteLine("════════════════════════════════════════════════════════════════════");
-            Console.WriteLine("                      FIN DES TESTS UNITAIRES");
+            Console.WriteLine("                        END OF UNIT TESTS");
             Console.WriteLine("════════════════════════════════════════════════════════════════════");
         }
         
@@ -141,7 +141,7 @@ namespace BasketOptionPricer
         {
             Console.Clear();
             Console.WriteLine("════════════════════════════════════════════════════════════════════");
-            Console.WriteLine("                        TESTS FONCTIONNELS");
+            Console.WriteLine("                        FUNCTIONAL TESTS");
             Console.WriteLine("════════════════════════════════════════════════════════════════════");
             Console.WriteLine();
             
@@ -149,7 +149,7 @@ namespace BasketOptionPricer
             
             Console.WriteLine();
             Console.WriteLine("════════════════════════════════════════════════════════════════════");
-            Console.WriteLine("                     FIN DES TESTS FONCTIONNELS");
+            Console.WriteLine("                     END OF FUNCTIONAL TESTS");
             Console.WriteLine("════════════════════════════════════════════════════════════════════");
         }
         
@@ -157,33 +157,33 @@ namespace BasketOptionPricer
         {
             Console.Clear();
             Console.WriteLine("════════════════════════════════════════════════════════════════════");
-            Console.WriteLine("                        DÉMONSTRATION AUTOMATIQUE");
+            Console.WriteLine("                        AUTOMATIC DEMONSTRATION");
             Console.WriteLine("════════════════════════════════════════════════════════════════════");
-            Console.WriteLine("Implémentation: Moment Matching (Brigo et al. - sections 3.2-3.3)");
+            Console.WriteLine("Implementation: Moment Matching (Brigo et al. - sections 3.2-3.3)");
             Console.WriteLine();
             
-            // Démonstration approche H1 vs H2
+            // Demonstration H1 vs H2 approach
             DemonstrateH1Approach();
             Console.WriteLine();
             DemonstrateH2Approach();
             
             Console.WriteLine();
             Console.WriteLine("════════════════════════════════════════════════════════════════════");
-            Console.WriteLine("                        FIN DE LA DÉMONSTRATION");
+            Console.WriteLine("                        END OF DEMONSTRATION");
             Console.WriteLine("════════════════════════════════════════════════════════════════════");
         }
         
         static void DemonstrateH1Approach()
         {
-            Console.WriteLine("🔶 APPROCHE H1 : Paramètres constants (r, σ fixes)");
-            Console.WriteLine("─────────────────────────────────────────────────────");
+            Console.WriteLine("🔶 H1 APPROACH: Constant parameters (fixed r, σ)");
+            Console.WriteLine("─────────────────────────────────────────────────");
             
-            // Configuration du panier
+            // Basket configuration
             var stocks = new List<Stock>
             {
-                new Stock("Action A", 100.0, 0.20, 0.02),
-                new Stock("Action B", 120.0, 0.25, 0.015),
-                new Stock("Action C", 80.0, 0.18, 0.025)
+                new Stock("Stock A", 100.0, 0.20, 0.02),
+                new Stock("Stock B", 120.0, 0.25, 0.015),
+                new Stock("Stock C", 80.0, 0.18, 0.025)
             };
             
             double[] weights = { 0.5, 0.3, 0.2 };
@@ -194,50 +194,50 @@ namespace BasketOptionPricer
                 { 0.2, 0.4, 1.0 }
             };
             
-            // Taux €STR BCE au 23/01/2026 : 1.933%
+            // €STR rate ECB as of 23/01/2026: 1.933%
             var basket = new Basket(stocks, weights, correlation, 0.01933);
             double basketValue = basket.GetBasketValue();
             
             var callOption = new BasketOption(basket, OptionType.Call, basketValue * 1.05, 1.0);
             var putOption = new BasketOption(basket, OptionType.Put, basketValue * 0.95, 1.0);
             
-            Console.WriteLine($"• Valeur initiale du panier: {basketValue:F2} €");
-            Console.WriteLine($"• Strike Call (105%): {callOption.Strike:F2} €");
-            Console.WriteLine($"• Strike Put (95%): {putOption.Strike:F2} €");
-            Console.WriteLine($"• Maturité: {callOption.Maturity} an");
-            Console.WriteLine($"• Taux sans risque: {basket.RiskFreeRate:P1}");
+            Console.WriteLine($"• Initial basket value: {basketValue:F2} €");
+            Console.WriteLine($"• Call Strike (105%): {callOption.Strike:F2} €");
+            Console.WriteLine($"• Put Strike (95%): {putOption.Strike:F2} €");
+            Console.WriteLine($"• Maturity: {callOption.Maturity} year");
+            Console.WriteLine($"• Risk-free rate: {basket.RiskFreeRate:P1}");
             Console.WriteLine();
             
             // Pricing
             double callPrice = MomentMatchingPricer.Price(callOption);
             double putPrice = MomentMatchingPricer.Price(putOption);
             
-            Console.WriteLine("Résultats H1:");
-            Console.WriteLine($"├─ Prix Call: {callPrice:F4} €");
-            Console.WriteLine($"└─ Prix Put:  {putPrice:F4} €");
+            Console.WriteLine("H1 Results:");
+            Console.WriteLine($"├─ Call Price: {callPrice:F4} €");
+            Console.WriteLine($"└─ Put Price:  {putPrice:F4} €");
             
-            // Validation Black-Scholes pour un seul actif
+            // Black-Scholes validation for single asset
             ValidateBlackScholes();
         }
         
         static void DemonstrateH2Approach()
         {
-            Console.WriteLine("🔷 APPROCHE H2 : Paramètres déterministes (r(t), σ(t))");
+            Console.WriteLine("🔷 H2 APPROACH: Deterministic parameters (r(t), σ(t))");
             Console.WriteLine("──────────────────────────────────────────────────────");
             
-            // Courbe de taux €STR BCE au 23/01/2026 : 1.933% (constant pour simplification)
+            // €STR rate curve ECB as of 23/01/2026: 1.933% (constant for simplification)
             var rateModel = new DeterministicRateModel();
-            rateModel.AddRatePoint(0.0, 0.01933);  // €STR à t=0
-            rateModel.AddRatePoint(0.5, 0.01933);  // €STR à t=0.5
-            rateModel.AddRatePoint(1.0, 0.01933);  // €STR à t=1
+            rateModel.AddRatePoint(0.0, 0.01933);  // €STR at t=0
+            rateModel.AddRatePoint(0.5, 0.01933);  // €STR at t=0.5
+            rateModel.AddRatePoint(1.0, 0.01933);  // €STR at t=1
             
-            Console.WriteLine("Courbe de taux r(t):");
+            Console.WriteLine("Rate curve r(t):");
             Console.WriteLine($"├─ r(0) = {rateModel.GetRate(0.0):P2}");
             Console.WriteLine($"├─ r(0.5) = {rateModel.GetRate(0.5):P2}");
             Console.WriteLine($"└─ r(1) = {rateModel.GetRate(1.0):P2}");
             Console.WriteLine();
             
-            // Volatilités déterministes
+            // Deterministic volatilities
             var vol1 = new DeterministicVolatilityModel();
             vol1.AddVolatilityPoint(0.0, 0.20);
             vol1.AddVolatilityPoint(0.5, 0.25);
@@ -247,16 +247,16 @@ namespace BasketOptionPricer
             vol2.AddVolatilityPoint(0.0, 0.18);
             vol2.AddVolatilityPoint(1.0, 0.28);
             
-            Console.WriteLine("Volatilités σ(t):");
-            Console.WriteLine($"├─ Action A: σ(0)={vol1.GetVolatility(0.0):P1} → σ(1)={vol1.GetVolatility(1.0):P1}");
-            Console.WriteLine($"└─ Action B: σ(0)={vol2.GetVolatility(0.0):P1} → σ(1)={vol2.GetVolatility(1.0):P1}");
+            Console.WriteLine("Volatilities σ(t):");
+            Console.WriteLine($"├─ Stock A: σ(0)={vol1.GetVolatility(0.0):P1} → σ(1)={vol1.GetVolatility(1.0):P1}");
+            Console.WriteLine($"└─ Stock B: σ(0)={vol2.GetVolatility(0.0):P1} → σ(1)={vol2.GetVolatility(1.0):P1}");
             Console.WriteLine();
             
-            // Panier H2
+            // H2 Basket
             var stocksH2 = new List<StockH2>
             {
-                new StockH2("Action A", 100.0, vol1, 0.02),
-                new StockH2("Action B", 120.0, vol2, 0.015)
+                new StockH2("Stock A", 100.0, vol1, 0.02),
+                new StockH2("Stock B", 120.0, vol2, 0.015)
             };
             
             double[] weights = { 0.6, 0.4 };
@@ -266,31 +266,31 @@ namespace BasketOptionPricer
             var callH2 = new BasketOptionH2(basketH2, OptionType.Call, 110.0, 1.0);
             var putH2 = new BasketOptionH2(basketH2, OptionType.Put, 105.0, 1.0);
             
-            Console.WriteLine($"• Valeur initiale du panier: {basketH2.GetBasketValue():F2} €");
-            Console.WriteLine($"• Strike Call: {callH2.Strike:F2} €");
-            Console.WriteLine($"• Strike Put: {putH2.Strike:F2} €");
+            Console.WriteLine($"• Initial basket value: {basketH2.GetBasketValue():F2} €");
+            Console.WriteLine($"• Call Strike: {callH2.Strike:F2} €");
+            Console.WriteLine($"• Put Strike: {putH2.Strike:F2} €");
             Console.WriteLine();
             
-            // Pricing H2
+            // H2 Pricing
             double callPriceH2 = MomentMatchingPricerH2.Price(callH2);
             double putPriceH2 = MomentMatchingPricerH2.Price(putH2);
             
-            Console.WriteLine("Résultats H2:");
-            Console.WriteLine($"├─ Prix Call: {callPriceH2:F4} €");
-            Console.WriteLine($"└─ Prix Put:  {putPriceH2:F4} €");
+            Console.WriteLine("H2 Results:");
+            Console.WriteLine($"├─ Call Price: {callPriceH2:F4} €");
+            Console.WriteLine($"└─ Put Price:  {putPriceH2:F4} €");
             Console.WriteLine();
             
-            // Démonstration convergence H2 → H1
+            // Demonstrate H2 → H1 convergence
             DemonstrateConvergence();
             
-            // Monte Carlo avec réduction de variance
+            // Monte Carlo with variance reduction
             DemonstrateVarianceReduction(callH2);
         }
         
         static void ValidateBlackScholes()
         {
             Console.WriteLine();
-            Console.WriteLine("Validation Black-Scholes (cas limite 1 actif):");
+            Console.WriteLine("Black-Scholes validation (single asset limit case):");
             
             var singleStock = new Stock("Test", 100.0, 0.20, 0.02);
             var singleBasket = new Basket(new List<Stock> { singleStock }, new double[] { 1.0 }, 
@@ -302,12 +302,12 @@ namespace BasketOptionPricer
             
             Console.WriteLine($"├─ Moment Matching: {mmPrice:F6} €");
             Console.WriteLine($"├─ Black-Scholes:   {bsPrice:F6} €");
-            Console.WriteLine($"└─ Différence: {Math.Abs(mmPrice - bsPrice):E}");
+            Console.WriteLine($"└─ Difference: {Math.Abs(mmPrice - bsPrice):E}");
         }
         
         static void DemonstrateConvergence()
         {
-            Console.WriteLine("Convergence H2 → H1 (paramètres constants):");
+            Console.WriteLine("H2 → H1 Convergence (constant parameters):");
             
             // H1
             var stockH1 = new Stock("Test", 100.0, 0.20, 0.02);
@@ -315,7 +315,7 @@ namespace BasketOptionPricer
                                     new double[,] { { 1.0 } }, 0.01933);
             var optionH1 = new BasketOption(basketH1, OptionType.Call, 105.0, 1.0);
             
-            // H2 avec paramètres équivalents constants (€STR 1.933%)
+            // H2 with equivalent constant parameters (€STR 1.933%)
             var stockH2 = new StockH2("Test", 100.0, 0.20, 0.02);
             var basketH2 = new BasketH2(new List<StockH2> { stockH2 }, new double[] { 1.0 }, 
                                       new double[,] { { 1.0 } }, 0.01933);
@@ -325,23 +325,23 @@ namespace BasketOptionPricer
             double priceH2 = MomentMatchingPricerH2.Price(optionH2);
             double error = Math.Abs(priceH1 - priceH2) / priceH1 * 100;
             
-            Console.WriteLine($"├─ Prix H1: {priceH1:F6} €");
-            Console.WriteLine($"├─ Prix H2: {priceH2:F6} €");
-            Console.WriteLine($"└─ Erreur relative: {error:F4}% ✓");
+            Console.WriteLine($"├─ H1 Price: {priceH1:F6} €");
+            Console.WriteLine($"├─ H2 Price: {priceH2:F6} €");
+            Console.WriteLine($"└─ Relative error: {error:F4}% ✓");
             Console.WriteLine();
         }
         
         static void DemonstrateVarianceReduction(BasketOptionH2 option)
         {
-            Console.WriteLine("Monte Carlo avec réduction de variance:");
+            Console.WriteLine("Monte Carlo with variance reduction:");
             
             var mcPricer = new MonteCarloPricerH2(42);
             var resultStandard = mcPricer.Price(option, 50000, false);
             var resultControlVariate = mcPricer.Price(option, 50000, true);
             
-            Console.WriteLine($"├─ MC standard: {resultStandard.Price:F4} € (σ = {resultStandard.StandardError:F4})");
-            Console.WriteLine($"├─ MC avec CV:  {resultControlVariate.Price:F4} € (σ = {resultControlVariate.StandardError:F4})");
-            Console.WriteLine($"└─ Réduction variance: {resultControlVariate.VarianceReduction:F1}% ✓");
+            Console.WriteLine($"├─ Standard MC: {resultStandard.Price:F4} € (σ = {resultStandard.StandardError:F4})");
+            Console.WriteLine($"├─ MC with CV:  {resultControlVariate.Price:F4} € (σ = {resultControlVariate.StandardError:F4})");
+            Console.WriteLine($"└─ Variance reduction: {resultControlVariate.VarianceReduction:F1}% ✓");
         }
     }
 }

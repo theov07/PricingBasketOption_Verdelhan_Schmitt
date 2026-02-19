@@ -8,7 +8,7 @@ namespace BasketOptionPricer
         public static void Run()
         {
             Console.WriteLine("════════════════════════════════════════════════════════════════════");
-            Console.WriteLine("          TEST SURFACE DE VOLATILITÉ - BLOOMBERG OVDV");
+            Console.WriteLine("          VOLATILITY SURFACE TEST - BLOOMBERG OVDV");
             Console.WriteLine("════════════════════════════════════════════════════════════════════\n");
 
             string csvPath = "../ SX5E_OVDV_2026-01-28_MID.csv";
@@ -38,11 +38,11 @@ namespace BasketOptionPricer
                 double testVol = surface.GetVolByStrike(0.25, 6000, 5990);
                 Console.WriteLine($"  GetVolByStrike(T=0.25, K=6000, F=5990) = {testVol * 100:F2}%");
 
-                Console.WriteLine("\n✓ Surface chargée et interpolation OK");
+                Console.WriteLine("\n✓ Surface loaded and interpolation OK");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur: {ex.Message}");
+                Console.WriteLine($"Error: {ex.Message}");
             }
 
             Console.WriteLine("\n════════════════════════════════════════════════════════════════════");

@@ -110,7 +110,7 @@ namespace BasketOptionPricer
                 {
                     OptionType.Call => Math.Max(M1 - strike, 0) * intrinsicDiscountFactor,
                     OptionType.Put => Math.Max(strike - M1, 0) * intrinsicDiscountFactor,
-                    _ => throw new ArgumentException("Type d'option non supporté")
+                    _ => throw new ArgumentException("Unsupported option type")
                 };
             }
             
@@ -124,7 +124,7 @@ namespace BasketOptionPricer
             {
                 OptionType.Call => discountFactor * (M1 * MathUtils.NormalCdf(d1) - strike * MathUtils.NormalCdf(d2)),
                 OptionType.Put => discountFactor * (strike * MathUtils.NormalCdf(-d2) - M1 * MathUtils.NormalCdf(-d1)),
-                _ => throw new ArgumentException("Type d'option non supporté")
+                _ => throw new ArgumentException("Unsupported option type")
             };
         }
     }

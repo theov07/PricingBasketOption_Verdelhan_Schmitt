@@ -33,28 +33,28 @@ namespace BasketOptionPricer
                 {
                     if (test.Value())
                     {
-                        Console.WriteLine("✅ RÉUSSI");
+                        Console.WriteLine("✅ PASSED");
                         passed++;
                     }
                     else
                     {
-                        Console.WriteLine("❌ ÉCHOUÉ");
+                        Console.WriteLine("❌ FAILED");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"❌ ERREUR: {ex.Message}");
+                    Console.WriteLine($"❌ ERROR: {ex.Message}");
                 }
             }
             
             Console.WriteLine();
-            Console.WriteLine($"Résumé: {passed}/{total} tests réussis ({passed * 100.0 / total:F1}%)");
-            Console.WriteLine(passed == total ? "✅ TOUS LES TESTS SONT PASSÉS" : "❌ CERTAINS TESTS ONT ÉCHOUÉ");
+            Console.WriteLine($"Summary: {passed}/{total} tests passed ({passed * 100.0 / total:F1}%)");
+            Console.WriteLine(passed == total ? "✅ ALL TESTS PASSED" : "❌ SOME TESTS FAILED");
         }
         
         private static bool TestTwoAssetBasketATM()
         {
-            // Test avec panier 2 actifs At-The-Money
+            // Test with 2-asset At-The-Money basket
             var stocks = new List<Stock>
             {
                 new Stock("Asset1", 100.0, 0.20, 0.02),
@@ -63,7 +63,7 @@ namespace BasketOptionPricer
             
             double[] weights = { 0.5, 0.5 };
             double[,] correlation = { { 1.0, 0.3 }, { 0.3, 1.0 } };
-            var basket = new Basket(stocks, weights, correlation, 0.01933); // €STR BCE 23/01/2026
+            var basket = new Basket(stocks, weights, correlation, 0.01933); // €STR ECB 23/01/2026
             
             double basketValue = basket.GetBasketValue(); // 110.0
             var callOption = new BasketOption(basket, OptionType.Call, basketValue, 1.0);
@@ -72,16 +72,16 @@ namespace BasketOptionPricer
             double callPrice = MomentMatchingPricer.Price(callOption);
             double putPrice = MomentMatchingPricer.Price(putOption);
             
-            // Vérifications de cohérence
+            // Consistency checks
             return callPrice > 0 && putPrice > 0 && 
-                   callPrice > putPrice && // Call ATM > Put ATM avec r > 0
+                   callPrice > putPrice && // Call ATM > Put ATM with r > 0
                    callPrice < basketValue && // Call < Spot
                    Math.Abs(callPrice - putPrice) < basketValue * 0.2;
         }
         
         private static bool TestThreeAssetDiversified()
         {
-            // Test avec panier diversifié 3 actifs
+            // Test with 3-asset diversified basket
             var stocks = new List<Stock>
             {
                 new Stock("Tech", 150.0, 0.30, 0.01),
@@ -97,24 +97,24 @@ namespace BasketOptionPricer
                 { 0.2, 0.3, 1.0 }
             };
             
-            var basket = new Basket(stocks, weights, correlation, 0.01933); // €STR BCE
+            var basket = new Basket(stocks, weights, correlation, 0.01933); // €STR ECB
             var option = new BasketOption(basket, OptionType.Call, basket.GetBasketValue() * 1.1, 1.5);
             
             double price = MomentMatchingPricer.Price(option);
             
-            // Test de cohérence avec option OTM
+            // Consistency test with OTM option
             return price > 0 && price < basket.GetBasketValue() * 0.3;
         }
         
         private static bool TestH1H2Convergence()
         {
-            // Test de convergence H2 vers H1 avec paramètres constants
+            // Test H2 convergence to H1 with constant parameters
             var stockH1 = new Stock("Test", 100.0, 0.20, 0.02);
             var basketH1 = new Basket(new List<Stock> { stockH1 }, new double[] { 1.0 }, 
-                                    new double[,] { { 1.0 } }, 0.01933); // €STR BCE
+                                    new double[,] { { 1.0 } }, 0.01933); // €STR ECB
             var optionH1 = new BasketOption(basketH1, OptionType.Call, 105.0, 1.0);
             
-            // H2 avec paramètres constants équivalents (€STR 1.933%)
+            // H2 with equivalent constant parameters (€STR 1.933%)
             var volModel = new DeterministicVolatilityModel(0.20);
             var rateModel = new DeterministicRateModel(0.01933);
             var stockH2 = new StockH2("Test", 100.0, volModel, 0.02);
@@ -132,10 +132,10 @@ namespace BasketOptionPricer
         
         private static bool TestMonteCarloVsMomentMatching()
         {
-            // Comparaison Monte Carlo vs Moment Matching
+            // Monte Carlo vs Moment Matching comparison
             var vol1 = new DeterministicVolatilityModel(0.20);
             var vol2 = new DeterministicVolatilityModel(0.25);
-            var rateModel = new DeterministicRateModel(0.01933); // €STR BCE
+            var rateModel = new DeterministicRateModel(0.01933); // €STR ECB
             
             var stocksH2 = new List<StockH2>
             {
@@ -161,9 +161,9 @@ namespace BasketOptionPricer
         
         private static bool TestVarianceReduction()
         {
-            // Test de réduction de variance Monte Carlo
+            // Monte Carlo variance reduction test
             var vol = new DeterministicVolatilityModel(0.20);
-            var rateModel = new DeterministicRateModel(0.01933); // €STR BCE
+            var rateModel = new DeterministicRateModel(0.01933); // €STR ECB
             var stockH2 = new StockH2("Test", 100.0, vol, 0.02);
             
             var basketH2 = new BasketH2(new List<StockH2> { stockH2 }, new double[] { 1.0 }, 
@@ -174,14 +174,14 @@ namespace BasketOptionPricer
             var resultStandard = mcPricer.Price(optionH2, 50000, false);
             var resultWithCV = mcPricer.Price(optionH2, 50000, true);
             
-            // La réduction de variance doit diminuer l'erreur standard
+            // Variance reduction should decrease standard error
             return resultWithCV.StandardError < resultStandard.StandardError &&
                    resultWithCV.VarianceReduction > 30.0;
         }
         
         private static bool TestCorrelationSensitivity()
         {
-            // Test de sensibilité à la corrélation
+            // Correlation sensitivity test
             var stocks = new List<Stock>
             {
                 new Stock("Asset1", 100.0, 0.20, 0.02),
@@ -190,15 +190,15 @@ namespace BasketOptionPricer
             
             double[] weights = { 0.5, 0.5 };
             
-            // Corrélation faible
+            // Low correlation
             double[,] corrLow = { { 1.0, 0.1 }, { 0.1, 1.0 } };
-            var basketLow = new Basket(stocks, weights, corrLow, 0.01933); // €STR BCE
+            var basketLow = new Basket(stocks, weights, corrLow, 0.01933); // €STR ECB
             var optionLow = new BasketOption(basketLow, OptionType.Call, 100.0, 1.0);
             double priceLow = MomentMatchingPricer.Price(optionLow);
             
-            // Corrélation élevée
+            // High correlation
             double[,] corrHigh = { { 1.0, 0.9 }, { 0.9, 1.0 } };
-            var basketHigh = new Basket(stocks, weights, corrHigh, 0.01933); // €STR BCE
+            var basketHigh = new Basket(stocks, weights, corrHigh, 0.01933); // €STR ECB
             var optionHigh = new BasketOption(basketHigh, OptionType.Call, 100.0, 1.0);
             double priceHigh = MomentMatchingPricer.Price(optionHigh);
             
@@ -207,7 +207,7 @@ namespace BasketOptionPricer
         
         private static bool TestDeterministicParametersH2()
         {
-            // Test avec paramètres vraiment déterministes (non constants)
+            // Test with truly deterministic (non-constant) parameters
             var rateModel = new DeterministicRateModel();
             rateModel.AddRatePoint(0.0, 0.02);
             rateModel.AddRatePoint(1.0, 0.04);
@@ -223,7 +223,7 @@ namespace BasketOptionPricer
             var optionH2 = new BasketOptionH2(basketH2, OptionType.Call, 105.0, 1.0);
             double price = MomentMatchingPricerH2.Price(optionH2);
             
-            // Comparaison avec paramètres constants (€STR)
+            // Comparison with constant parameters (€STR)
             var constantRate = new DeterministicRateModel(0.01933);
             var constantVol = new DeterministicVolatilityModel(0.20);
             var stockConstant = new StockH2("Test", 100.0, constantVol, 0.02);
@@ -237,30 +237,30 @@ namespace BasketOptionPricer
         
         private static bool TestPutCallRelationship()
         {
-            // Test de la relation entre Call et Put
+            // Test Put-Call relationship
             var stocks = new List<Stock>
             {
                 new Stock("Test", 100.0, 0.20, 0.02)
             };
             
-            var basket = new Basket(stocks, new double[] { 1.0 }, new double[,] { { 1.0 } }, 0.01933); // €STR BCE
+            var basket = new Basket(stocks, new double[] { 1.0 }, new double[,] { { 1.0 } }, 0.01933); // €STR ECB
             
-            // Options ATM
+            // ATM Options
             var callATM = new BasketOption(basket, OptionType.Call, 100.0, 1.0);
             var putATM = new BasketOption(basket, OptionType.Put, 100.0, 1.0);
             
             double callPriceATM = MomentMatchingPricer.Price(callATM);
             double putPriceATM = MomentMatchingPricer.Price(putATM);
             
-            // Options ITM/OTM
+            // ITM/OTM Options
             var callITM = new BasketOption(basket, OptionType.Call, 95.0, 1.0);
             var putOTM = new BasketOption(basket, OptionType.Put, 95.0, 1.0);
             
             double callPriceITM = MomentMatchingPricer.Price(callITM);
             double putPriceOTM = MomentMatchingPricer.Price(putOTM);
             
-            // Vérifications de cohérence
-            return callPriceATM > putPriceATM && // Call ATM > Put ATM avec taux positif
+            // Consistency checks
+            return callPriceATM > putPriceATM && // Call ATM > Put ATM with positive rate
                    callPriceITM > callPriceATM && // Call ITM > Call ATM
                    putPriceOTM < putPriceATM && // Put OTM < Put ATM
                    callPriceITM > putPriceOTM; // Call ITM > Put OTM

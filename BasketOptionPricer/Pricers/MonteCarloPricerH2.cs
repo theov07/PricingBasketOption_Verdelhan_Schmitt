@@ -2,7 +2,7 @@ using System;
 
 namespace BasketOptionPricer
 {
-    /// Résultat d'une simulation Monte Carlo avec information sur la variance
+    /// Monte Carlo simulation result with variance information
     public class MonteCarloResultH2
     {
         public double Price { get; set; }
@@ -12,7 +12,7 @@ namespace BasketOptionPricer
         public double VarianceReduction { get; set; } = 0.0;
     }
     
-    /// Pricer Monte Carlo pour l'approche H2 avec paramètres déterministes
+    /// Monte Carlo pricer for H2 approach with deterministic parameters
     public class MonteCarloPricerH2
     {
         private readonly Random _random;
@@ -24,7 +24,7 @@ namespace BasketOptionPricer
             _random = new Random(seed);
         }
         
-        /// Price l'option par Monte Carlo avec paramètres déterministes
+        /// Price the option via Monte Carlo with deterministic parameters
         public MonteCarloResultH2 Price(BasketOptionH2 option, int numSimulations = 100000, bool useControlVariate = false)
         {
             BasketH2 basket = option.Basket;
@@ -114,13 +114,13 @@ namespace BasketOptionPricer
             
             double[] prices = new double[numAssets];
             
-            // Initialisation
+            // Initialization
             for (int i = 0; i < numAssets; i++)
             {
                 prices[i] = basket.Stocks[i].SpotPrice;
             }
             
-            // Evolution par discrétisation d'Euler
+            // Euler discretization evolution
             for (int step = 0; step < numSteps; step++)
             {
                 double t = step * dt;
@@ -138,7 +138,7 @@ namespace BasketOptionPricer
                     prices[i] *= Math.Exp(drift - 0.5 * volatility * volatility * dt + diffusion);
                 }
                 
-                // Génération de nouveaux nombres aléatoires pour le pas suivant
+                // Generate new random numbers for next step
                 if (step < numSteps - 1)
                 {
                     randomNumbers = GenerateCorrelatedRandomNumbers(
@@ -149,19 +149,19 @@ namespace BasketOptionPricer
             return prices;
         }
         
-        /// Génère des nombres aléatoires corrélés par décomposition de Cholesky
+        /// Generate correlated random numbers via Cholesky decomposition
         private double[] GenerateCorrelatedRandomNumbers(double[,] choleskyMatrix, int numAssets)
         {
             double[] independentRandom = new double[numAssets];
             double[] correlatedRandom = new double[numAssets];
             
-            // Génération de nombres aléatoires indépendants N(0,1)
+            // Generate independent N(0,1) random numbers
             for (int i = 0; i < numAssets; i++)
             {
                 independentRandom[i] = MathUtils.GenerateNormalRandom(_random);
             }
             
-            // Application de la matrice de Cholesky
+            // Apply Cholesky matrix
             for (int i = 0; i < numAssets; i++)
             {
                 correlatedRandom[i] = 0;
@@ -174,10 +174,10 @@ namespace BasketOptionPricer
             return correlatedRandom;
         }
         
-        /// Calcule la variable de contrôle (moyenne géométrique du panier)
+        /// Calculate control variate (geometric mean of basket)
         private double CalculateControlVariate(BasketH2 basket, double[] finalPrices, double strike, OptionType optionType)
         {
-            // Utilise la moyenne géométrique comme variable de contrôle
+            // Use geometric mean as control variate
             double geometricMean = 1.0;
             for (int i = 0; i < finalPrices.Length; i++)
             {
@@ -192,7 +192,7 @@ namespace BasketOptionPricer
             };
         }
         
-        /// Applique la réduction de variance par variable de contrôle
+        /// Apply variance reduction via control variate
         private void ApplyControlVariateReduction(MonteCarloResultH2 result, double sum, 
             double controlVariateSum, double controlVariateSumSquared, 
             double covarianceSum, int numSimulations)

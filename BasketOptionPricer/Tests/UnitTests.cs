@@ -3,26 +3,26 @@ using System.Collections.Generic;
 
 namespace BasketOptionPricer
 {
-    // Tests unitaires pour vérifier que tout marche bien
+    // Unit tests to verify everything works correctly
     public static class UnitTests
     {
         public static void RunAllTests()
         {
-            Console.WriteLine("Tests Unitaires");
-            Console.WriteLine("===============");
+            Console.WriteLine("Unit Tests");
+            Console.WriteLine("==========");
             
             var tests = new Dictionary<string, Func<bool>>
             {
-                { "Test CDF normale", TestNormalCdf },
-                { "Test Black-Scholes", TestBlackScholes },
-                { "Construction Stock", TestStockConstruction },
-                { "Construction Basket", TestBasketConstruction },
-                { "Pricer Moment Matching", TestMomentMatchingPricer },
-                { "Modèles H2", TestH2Models },
-                { "Cohérence Pricing", TestPricingConsistency }
+                { "Normal CDF test", TestNormalCdf },
+                { "Black-Scholes test", TestBlackScholes },
+                { "Stock construction", TestStockConstruction },
+                { "Basket construction", TestBasketConstruction },
+                { "Moment Matching pricer", TestMomentMatchingPricer },
+                { "H2 Models", TestH2Models },
+                { "Pricing consistency", TestPricingConsistency }
             };
             
-            int reussis = 0;
+            int passed = 0;
             int total = tests.Count;
             
             foreach (var test in tests)
@@ -33,31 +33,31 @@ namespace BasketOptionPricer
                     if (test.Value())
                     {
                         Console.WriteLine("OK");
-                        reussis++;
+                        passed++;
                     }
                     else
                     {
-                        Console.WriteLine("ECHEC");
+                        Console.WriteLine("FAILED");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"ERREUR: {ex.Message}");
+                    Console.WriteLine($"ERROR: {ex.Message}");
                 }
             }
             
             Console.WriteLine();
-            Console.WriteLine($"Résultats: {reussis}/{total} tests réussis");
+            Console.WriteLine($"Results: {passed}/{total} tests passed");
             
-            if (reussis == total)
-                Console.WriteLine("Tous les tests OK !");
+            if (passed == total)
+                Console.WriteLine("All tests OK!");
             else
-                Console.WriteLine("Certains tests ont échoué");
+                Console.WriteLine("Some tests failed");
         }
         
         private static bool TestNormalCdf()
         {
-            // Test de la fonction de répartition normale
+            // Test normal distribution CDF
             double result1 = MathUtils.NormalCdf(0.0);
             double result2 = MathUtils.NormalCdf(-1.96);
             double result3 = MathUtils.NormalCdf(1.96);
@@ -70,7 +70,7 @@ namespace BasketOptionPricer
         
         private static bool TestBlackScholes()
         {
-            // Test de la formule Black-Scholes
+            // Test Black-Scholes formula
             double spot = 100.0;
             double strike = 100.0;
             double rate = 0.05;
@@ -89,7 +89,7 @@ namespace BasketOptionPricer
         
         private static bool TestStockConstruction()
         {
-            // Test de construction des stocks
+            // Test stock construction
             try
             {
                 var stock = new Stock("Test", 100.0, 0.20, 0.02);
@@ -107,7 +107,7 @@ namespace BasketOptionPricer
         
         private static bool TestBasketConstruction()
         {
-            // Test de construction d'un panier
+            // Test basket construction
             try
             {
                 var stocks = new List<Stock>
@@ -118,7 +118,7 @@ namespace BasketOptionPricer
                 
                 double[] weights = { 0.6, 0.4 };
                 double[,] correlation = { { 1.0, 0.3 }, { 0.3, 1.0 } };
-                double riskFreeRate = 0.01933; // €STR BCE 23/01/2026
+                double riskFreeRate = 0.01933; // €STR ECB 23/01/2026
                 
                 var basket = new Basket(stocks, weights, correlation, riskFreeRate);
                 
@@ -135,12 +135,12 @@ namespace BasketOptionPricer
         
         private static bool TestMomentMatchingPricer()
         {
-            // Test du pricer Moment Matching
+            // Test Moment Matching pricer
             try
             {
                 var stock = new Stock("Test", 100.0, 0.20, 0.02);
                 var basket = new Basket(new List<Stock> { stock }, new double[] { 1.0 }, 
-                                      new double[,] { { 1.0 } }, 0.01933); // €STR BCE
+                                      new double[,] { { 1.0 } }, 0.01933); // €STR ECB
                 
                 var callOption = new BasketOption(basket, OptionType.Call, 105.0, 1.0);
                 var putOption = new BasketOption(basket, OptionType.Put, 95.0, 1.0);
@@ -148,10 +148,10 @@ namespace BasketOptionPricer
                 double callPrice = MomentMatchingPricer.Price(callOption);
                 double putPrice = MomentMatchingPricer.Price(putOption);
                 
-                // Vérifications de cohérence
+                // Consistency checks
                 return callPrice > 0 && putPrice > 0 && 
                        callPrice < basket.GetBasketValue() && // Call < Spot
-                       putPrice < callOption.Strike; // Put < Strike pour ITM put
+                       putPrice < callOption.Strike; // Put < Strike for ITM put
             }
             catch
             {
@@ -161,7 +161,7 @@ namespace BasketOptionPricer
         
         private static bool TestH2Models()
         {
-            // Test des modèles H2 (paramètres déterministes)
+            // Test H2 models (deterministic parameters)
             try
             {
                 // Test DeterministicRateModel
@@ -170,7 +170,7 @@ namespace BasketOptionPricer
                 rateModel.AddRatePoint(1.0, 0.04);
                 
                 double rate05 = rateModel.GetRate(0.5);
-                bool rateTest = Math.Abs(rate05 - 0.03) < 1e-10; // Interpolation linéaire
+                bool rateTest = Math.Abs(rate05 - 0.03) < 1e-10; // Linear interpolation
                 
                 // Test DeterministicVolatilityModel
                 var volModel = new DeterministicVolatilityModel();
@@ -178,7 +178,7 @@ namespace BasketOptionPricer
                 volModel.AddVolatilityPoint(1.0, 0.30);
                 
                 double vol05 = volModel.GetVolatility(0.5);
-                bool volTest = Math.Abs(vol05 - 0.25) < 1e-10; // Interpolation linéaire
+                bool volTest = Math.Abs(vol05 - 0.25) < 1e-10; // Linear interpolation
                 
                 // Test StockH2
                 var stockH2 = new StockH2("Test", 100.0, volModel, 0.02);
@@ -194,7 +194,7 @@ namespace BasketOptionPricer
         
         private static bool TestPricingConsistency()
         {
-            // Test de cohérence entre les prix
+            // Test pricing consistency
             try
             {
                 var stocks = new List<Stock>
@@ -205,9 +205,9 @@ namespace BasketOptionPricer
                 
                 double[] weights = { 0.5, 0.5 };
                 double[,] correlation = { { 1.0, 0.4 }, { 0.4, 1.0 } };
-                var basket = new Basket(stocks, weights, correlation, 0.01933); // €STR BCE
+                var basket = new Basket(stocks, weights, correlation, 0.01933); // €STR ECB
                 
-                // Test avec différents strikes
+                // Test with different strikes
                 var atmCall = new BasketOption(basket, OptionType.Call, basket.GetBasketValue(), 1.0);
                 var otmCall = new BasketOption(basket, OptionType.Call, basket.GetBasketValue() * 1.1, 1.0);
                 var itmCall = new BasketOption(basket, OptionType.Call, basket.GetBasketValue() * 0.9, 1.0);
@@ -216,7 +216,7 @@ namespace BasketOptionPricer
                 double otmPrice = MomentMatchingPricer.Price(otmCall);
                 double itmPrice = MomentMatchingPricer.Price(itmCall);
                 
-                // Vérifications de cohérence: ITM > ATM > OTM
+                // Consistency checks: ITM > ATM > OTM
                 return itmPrice > atmPrice && atmPrice > otmPrice && otmPrice > 0;
             }
             catch

@@ -10,14 +10,14 @@ namespace BasketOptionPricer
         public string Name { get; }
         public double SpotPrice { get; }
         public DeterministicVolatilityModel VolatilityModel { get; }
-        public double DividendRate { get; } // Reste constant en H2
+        public double DividendRate { get; } // Remains constant in H2
         
         public StockH2(string name, double spotPrice, DeterministicVolatilityModel volatilityModel, double dividendRate)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
-            SpotPrice = spotPrice > 0 ? spotPrice : throw new ArgumentException("Le prix spot doit être positif", nameof(spotPrice));
+            SpotPrice = spotPrice > 0 ? spotPrice : throw new ArgumentException("Spot price must be positive", nameof(spotPrice));
             VolatilityModel = volatilityModel ?? throw new ArgumentNullException(nameof(volatilityModel));
-            DividendRate = dividendRate >= 0 ? dividendRate : throw new ArgumentException("Le taux de dividende doit être positif", nameof(dividendRate));
+            DividendRate = dividendRate >= 0 ? dividendRate : throw new ArgumentException("Dividend rate must be positive", nameof(dividendRate));
         }
         
         public StockH2(string name, double spotPrice, double constantVolatility, double dividendRate)
@@ -51,31 +51,31 @@ namespace BasketOptionPricer
         private void ValidateInputs()
         {
             if (Stocks.Count == 0)
-                throw new ArgumentException("Le panier doit contenir au moins un actif");
+                throw new ArgumentException("Basket must contain at least one asset");
             
             if (Weights.Length != Stocks.Count)
-                throw new ArgumentException("Le nombre de poids doit égaler le nombre d'actifs");
+                throw new ArgumentException("Number of weights must equal number of assets");
             
             if (Math.Abs(Weights.Sum() - 1.0) > 1e-6)
-                throw new ArgumentException("La somme des poids doit être égale à 1");
+                throw new ArgumentException("Sum of weights must equal 1");
             
             int n = Stocks.Count;
             if (CorrelationMatrix.GetLength(0) != n || CorrelationMatrix.GetLength(1) != n)
-                throw new ArgumentException("La matrice de corrélation doit être n×n");
+                throw new ArgumentException("Correlation matrix must be n×n");
             
-            // Validation matrice de corrélation
+            // Correlation matrix validation
             for (int i = 0; i < n; i++)
             {
                 if (Math.Abs(CorrelationMatrix[i, i] - 1.0) > 1e-6)
-                    throw new ArgumentException($"La corrélation diagonale [{i},{i}] doit être 1");
+                    throw new ArgumentException($"Diagonal correlation [{i},{i}] must be 1");
                 
                 for (int j = i + 1; j < n; j++)
                 {
                     if (Math.Abs(CorrelationMatrix[i, j] - CorrelationMatrix[j, i]) > 1e-6)
-                        throw new ArgumentException("La matrice de corrélation doit être symétrique");
+                        throw new ArgumentException("Correlation matrix must be symmetric");
                     
                     if (Math.Abs(CorrelationMatrix[i, j]) > 1.0)
-                        throw new ArgumentException("Les corrélations doivent être entre -1 et 1");
+                        throw new ArgumentException("Correlations must be between -1 and 1");
                 }
             }
         }
@@ -102,8 +102,8 @@ namespace BasketOptionPricer
         {
             Basket = basket ?? throw new ArgumentNullException(nameof(basket));
             Type = type;
-            Strike = strike > 0 ? strike : throw new ArgumentException("Le strike doit être positif", nameof(strike));
-            Maturity = maturity > 0 ? maturity : throw new ArgumentException("La maturité doit être positive", nameof(maturity));
+            Strike = strike > 0 ? strike : throw new ArgumentException("Strike must be positive", nameof(strike));
+            Maturity = maturity > 0 ? maturity : throw new ArgumentException("Maturity must be positive", nameof(maturity));
         }
         
         public double CalculatePayoff(double basketValue)
@@ -112,7 +112,7 @@ namespace BasketOptionPricer
             {
                 OptionType.Call => Math.Max(basketValue - Strike, 0),
                 OptionType.Put => Math.Max(Strike - basketValue, 0),
-                _ => throw new ArgumentException("Type d'option non supporté")
+                _ => throw new ArgumentException("Unsupported option type")
             };
         }
     }

@@ -2,19 +2,19 @@ using System;
 
 namespace BasketOptionPricer
 {
-    // Fonctions mathematiques utiles
+    // Useful mathematical functions
     public static class MathUtils
     {
-        // Fonction de répartition de la loi normale
+        // Normal distribution CDF
         public static double NormalCdf(double x)
         {
             return 0.5 * (1.0 + Erf(x / Math.Sqrt(2.0)));
         }
         
-        // Fonction d'erreur avec approximation d'Abramowitz et Stegun
+        // Error function with Abramowitz and Stegun approximation
         private static double Erf(double x)
         {
-            // constantes de l'approximation
+            // approximation constants
             double a1 = 0.254829592;
             double a2 = -0.284496736;
             double a3 = 1.421413741;
@@ -31,10 +31,10 @@ namespace BasketOptionPricer
             return sign * y;
         }
         
-        // Formule de Black-Scholes classique
+        // Classic Black-Scholes formula
         public static double BlackScholesPrice(double s, double k, double r, double sigma, double t, OptionType optionType)
         {
-            // calcul de d1 et d2
+            // calculate d1 and d2
             double d1 = (Math.Log(s / k) + (r + 0.5 * sigma * sigma) * t) / (sigma * Math.Sqrt(t));
             double d2 = d1 - sigma * Math.Sqrt(t);
             
@@ -49,10 +49,10 @@ namespace BasketOptionPricer
             }
         }
         
-        // Générateur de nombres aléatoires normaux avec Box-Muller
+        // Normal random number generator with Box-Muller
         public static double GenerateNormalRandom(Random random)
         {
-            // Version simplifiée de Box-Muller sans variables static
+            // Simplified Box-Muller version without static variables
             double u1 = random.NextDouble();
             double u2 = random.NextDouble();
             
@@ -60,7 +60,7 @@ namespace BasketOptionPricer
             return z0;
         }
         
-        /// Décomposition de Cholesky d'une matrice de corrélation
+        /// Cholesky decomposition of a correlation matrix
         public static double[,] CholeskyDecomposition(double[,] matrix)
         {
             int n = matrix.GetLength(0);

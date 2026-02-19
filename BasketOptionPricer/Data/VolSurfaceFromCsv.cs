@@ -48,7 +48,7 @@ namespace BasketOptionPricer.Data
         public double InterpolateVol(double moneyness)
         {
             if (_points.Count == 0)
-                throw new InvalidOperationException("Aucun point dans la slice");
+                throw new InvalidOperationException("No points in slice");
 
             if (_points.Count == 1)
                 return _points[0].ImpliedVol;
@@ -95,7 +95,7 @@ namespace BasketOptionPricer.Data
         public static VolSurfaceFromCsv LoadFromCsv(string filePath, string underlying = "SX5E")
         {
             if (!File.Exists(filePath))
-                throw new FileNotFoundException($"Fichier non trouvé: {filePath}");
+                throw new FileNotFoundException($"File not found: {filePath}");
 
             var surface = new VolSurfaceFromCsv(underlying);
             var lines = File.ReadAllLines(filePath);
@@ -144,7 +144,7 @@ namespace BasketOptionPricer.Data
         public double GetVolByMoneyness(double T, double moneyness)
         {
             if (_slices.Count == 0)
-                throw new InvalidOperationException("Surface vide");
+                throw new InvalidOperationException("Empty surface");
 
             var mats = _slices.Keys.ToList();
 

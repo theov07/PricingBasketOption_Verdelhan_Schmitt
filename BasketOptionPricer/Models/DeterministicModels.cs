@@ -32,7 +32,7 @@ namespace BasketOptionPricer
         public double GetRate(double time)
         {
             if (_ratePoints.Count == 0)
-                throw new InvalidOperationException("Aucun point de taux défini");
+                throw new InvalidOperationException("No rate points defined");
             
             if (time <= _ratePoints.First().time)
                 return _ratePoints.First().rate;
@@ -110,7 +110,7 @@ namespace BasketOptionPricer
         public double GetVolatility(double time)
         {
             if (_volPoints.Count == 0)
-                throw new InvalidOperationException("Aucun point de volatilité défini");
+                throw new InvalidOperationException("No volatility points defined");
             
             if (time <= _volPoints.First().time)
                 return _volPoints.First().volatility;

@@ -2,7 +2,7 @@ using System;
 
 namespace BasketOptionPricer
 {
-    // Pricer H1 - Moment Matching basé sur Brigo et al.
+    // H1 Pricer - Moment Matching based on Brigo et al.
     public class MomentMatchingPricer
     {
         public static double Price(BasketOption option)
@@ -11,7 +11,7 @@ namespace BasketOptionPricer
             double T = option.Maturity;
             double r = basket.RiskFreeRate;
             
-            // calcul des moments du panier
+            // calculate basket moments
             double basketValue = basket.GetBasketValue();
             double moment1 = CalculateFirstMoment(basket, T);
             double moment2 = CalculateSecondMoment(basket, T);
@@ -21,7 +21,7 @@ namespace BasketOptionPricer
                 moment2 = moment1 * moment1 * 1.0001;
             }
             
-            // paramètres de la lognormale équivalente
+            // equivalent lognormal parameters
             double sigmaSquared = (1.0 / T) * Math.Log(moment2 / (moment1 * moment1));
             double mu = (1.0 / T) * Math.Log(moment1 / basketValue);
             double sigma = Math.Sqrt(sigmaSquared);
@@ -29,31 +29,31 @@ namespace BasketOptionPricer
             return CalculateOptionPrice(moment1, option.Strike, r, sigma, T, option.Type);
         }
         
-        // Calcul du premier moment E[B_T]
+        // First moment calculation E[B_T]
         private static double CalculateFirstMoment(Basket basket, double T)
         {
-            double resultat = 0;
+            double result = 0;
             
             for (int i = 0; i < basket.Stocks.Count; i++)
             {
-                Stock actif = basket.Stocks[i];
-                double poids = basket.Weights[i];
-                double S0 = actif.SpotPrice;
-                double q = actif.DividendRate;
+                Stock asset = basket.Stocks[i];
+                double weight = basket.Weights[i];
+                double S0 = asset.SpotPrice;
+                double q = asset.DividendRate;
                 double r = basket.RiskFreeRate;
                 
                 // forward price
                 double forward = S0 * Math.Exp((r - q) * T);
-                resultat += poids * forward;
+                result += weight * forward;
             }
             
-            return resultat;
+            return result;
         }
         
-        // Calcul du deuxième moment E[B_T^2] avec correlations
+        // Second moment calculation E[B_T^2] with correlations
         private static double CalculateSecondMoment(Basket basket, double T)
         {
-            double resultat = 0;
+            double result = 0;
             
             for (int i = 0; i < basket.Stocks.Count; i++)
             {
@@ -83,7 +83,7 @@ namespace BasketOptionPricer
                 }
             }
             
-            return resultat;
+            return result;
         }
         
         private static double CalculateOptionPrice(double M1, double strike, double riskFreeRate, double sigmaHat, double maturity, OptionType optionType)

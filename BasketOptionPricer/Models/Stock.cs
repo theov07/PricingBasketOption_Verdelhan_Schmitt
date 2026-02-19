@@ -2,15 +2,15 @@ using System;
 
 namespace BasketOptionPricer
 {
-    // Classe pour représenter un actif financier
+    // Class to represent a financial asset
     public class Stock
     {
-        public string Name { get; set; } // nom de l'actif
-        public double SpotPrice { get; set; } // prix actuel S0
-        public double Volatility { get; set; } // volatilité sigma
-        public double DividendRate { get; set; } // taux de dividende
+        public string Name { get; set; } // asset name
+        public double SpotPrice { get; set; } // current price S0
+        public double Volatility { get; set; } // volatility sigma
+        public double DividendRate { get; set; } // dividend rate
         
-        // Constructeur simple
+        // Simple constructor
         public Stock(string name, double spotPrice, double volatility, double dividendRate)
         {
             Name = name;

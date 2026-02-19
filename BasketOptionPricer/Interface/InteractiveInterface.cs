@@ -10,67 +10,67 @@ namespace BasketOptionPricer
         {
             Console.Clear();
             Console.WriteLine("═══════════════════════════════════════════════════════════");
-            Console.WriteLine("           PRICER INTERACTIF D'OPTIONS SUR PANIER");
+            Console.WriteLine("           INTERACTIVE BASKET OPTION PRICER");
             Console.WriteLine("═══════════════════════════════════════════════════════════");
             Console.WriteLine();
 
             try
             {
-                // 1. Saisie de la composition du panier
+                // 1. Input basket composition
                 var basketData = GetBasketComposition();
                 
-                // 2. Saisie des paramètres financiers
+                // 2. Input financial parameters
                 var financialParams = GetFinancialParameters(basketData.stocks.Count);
                 
-                // 3. Saisie des paramètres de l'option
+                // 3. Input option parameters
                 var optionParams = GetOptionParameters(basketData);
                 
-                // 4. Choix de la méthode de valorisation
+                // 4. Choose pricing method
                 var pricingMethod = ChoosePricingMethod();
                 
-                // 5. Calcul et affichage des résultats
+                // 5. Calculate and display results
                 DisplayResults(basketData, financialParams, optionParams, pricingMethod);
                 
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\n❌ Erreur: {ex.Message}");
-                Console.WriteLine("\nAppuyez sur une touche pour continuer...");
+                Console.WriteLine($"\n❌ Error: {ex.Message}");
+                Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
             }
         }
 
         private static (List<Stock> stocks, double[] weights) GetBasketComposition()
         {
-            Console.WriteLine("📊 COMPOSITION DU PANIER");
+            Console.WriteLine("📊 BASKET COMPOSITION");
             Console.WriteLine("─────────────────────────");
             
-            int numStocks = GetIntInput("Nombre d'actifs dans le panier (2-5): ", 2, 5);
+            int numStocks = GetIntInput("Number of assets in basket (2-5): ", 2, 5);
             
             var stocks = new List<Stock>();
             var weights = new double[numStocks];
             
             for (int i = 0; i < numStocks; i++)
             {
-                Console.WriteLine($"\n• Actif {i + 1}:");
+                Console.WriteLine($"\n• Asset {i + 1}:");
                 
-                string name = GetStringInput($"  Nom: ");
-                double spotPrice = GetDoubleInput("  Prix spot (€): ", 1.0, 1000.0);
-                double volatility = GetDoubleInput("  Volatilité (ex: 0.20 pour 20%): ", 0.01, 2.0);
-                double dividendRate = GetDoubleInput("  Taux dividende (ex: 0.02 pour 2%): ", 0.0, 0.1);
-                double weight = GetDoubleInput("  Poids dans le panier (ex: 0.3 pour 30%): ", 0.01, 1.0);
+                string name = GetStringInput($"  Name: ");
+                double spotPrice = GetDoubleInput("  Spot price (€): ", 1.0, 1000.0);
+                double volatility = GetDoubleInput("  Volatility (e.g., 0.20 for 20%): ", 0.01, 2.0);
+                double dividendRate = GetDoubleInput("  Dividend rate (e.g., 0.02 for 2%): ", 0.0, 0.1);
+                double weight = GetDoubleInput("  Weight in basket (e.g., 0.3 for 30%): ", 0.01, 1.0);
                 
                 stocks.Add(new Stock(name, spotPrice, volatility, dividendRate));
                 weights[i] = weight;
             }
             
-            // Normalisation des poids
+            // Weight normalization
             double totalWeight = 0;
             for (int i = 0; i < weights.Length; i++) totalWeight += weights[i];
             
             if (Math.Abs(totalWeight - 1.0) > 0.01)
             {
-                Console.WriteLine($"\n⚠️  Normalisation des poids (somme = {totalWeight:F3})");
+                Console.WriteLine($"\n⚠️  Normalizing weights (sum = {totalWeight:F3})");
                 for (int i = 0; i < weights.Length; i++) 
                     weights[i] /= totalWeight;
             }
@@ -80,26 +80,26 @@ namespace BasketOptionPricer
 
         private static (double[,] correlation, double riskFreeRate) GetFinancialParameters(int numStocks)
         {
-            Console.WriteLine("\n💰 PARAMÈTRES FINANCIERS");
+            Console.WriteLine("\n💰 FINANCIAL PARAMETERS");
             Console.WriteLine("─────────────────────────");
             
-            double riskFreeRate = GetDoubleInput("Taux sans risque (ex: 0.03 pour 3%): ", 0.0, 0.2);
+            double riskFreeRate = GetDoubleInput("Risk-free rate (e.g., 0.03 for 3%): ", 0.0, 0.2);
             
             var correlation = new double[numStocks, numStocks];
             
-            // Diagonale = 1
+            // Diagonal = 1
             for (int i = 0; i < numStocks; i++)
                 correlation[i, i] = 1.0;
             
-            // Saisie des corrélations (matrice symétrique)
+            // Input correlations (symmetric matrix)
             if (numStocks > 1)
             {
-                Console.WriteLine("\nCorrélations entre actifs:");
+                Console.WriteLine("\nCorrelations between assets:");
                 for (int i = 0; i < numStocks; i++)
                 {
                     for (int j = i + 1; j < numStocks; j++)
                     {
-                        double corr = GetDoubleInput($"  Corrélation Actif {i+1} - Actif {j+1} (-1 à 1): ", -0.99, 0.99);
+                        double corr = GetDoubleInput($"  Correlation Asset {i+1} - Asset {j+1} (-1 to 1): ", -0.99, 0.99);
                         correlation[i, j] = corr;
                         correlation[j, i] = corr;
                     }
@@ -111,41 +111,41 @@ namespace BasketOptionPricer
 
         private static (OptionType type, double strike, double maturity) GetOptionParameters((List<Stock> stocks, double[] weights) basketData)
         {
-            Console.WriteLine("\n📋 PARAMÈTRES DE L'OPTION");
+            Console.WriteLine("\n📋 OPTION PARAMETERS");
             Console.WriteLine("──────────────────────────");
             
-            // Calcul de la valeur du panier
+            // Calculate basket value
             double basketValue = 0;
             for (int i = 0; i < basketData.stocks.Count; i++)
                 basketValue += basketData.weights[i] * basketData.stocks[i].SpotPrice;
             
-            Console.WriteLine($"Valeur actuelle du panier: {basketValue:F2} €");
+            Console.WriteLine($"Current basket value: {basketValue:F2} €");
             
-            // Type d'option
-            Console.WriteLine("\nType d'option:");
+            // Option type
+            Console.WriteLine("\nOption type:");
             Console.WriteLine("1. Call");
             Console.WriteLine("2. Put");
-            int choice = GetIntInput("Choix (1-2): ", 1, 2);
+            int choice = GetIntInput("Choice (1-2): ", 1, 2);
             OptionType optionType = (choice == 1) ? OptionType.Call : OptionType.Put;
             
             // Strike
             double defaultStrike = basketValue;
-            double strike = GetDoubleInput($"Strike (défaut {defaultStrike:F2}€): ", basketValue * 0.5, basketValue * 2.0, defaultStrike);
+            double strike = GetDoubleInput($"Strike (default {defaultStrike:F2}€): ", basketValue * 0.5, basketValue * 2.0, defaultStrike);
             
-            // Maturité
-            double maturity = GetDoubleInput("Maturité en années (ex: 1.0): ", 0.1, 10.0);
+            // Maturity
+            double maturity = GetDoubleInput("Maturity in years (e.g., 1.0): ", 0.1, 10.0);
             
             return (optionType, strike, maturity);
         }
 
         private static string ChoosePricingMethod()
         {
-            Console.WriteLine("\n🔧 MÉTHODE DE VALORISATION");
+            Console.WriteLine("\n🔧 PRICING METHOD");
             Console.WriteLine("───────────────────────────");
             Console.WriteLine("1. Moment Matching (Brigo et al.)");
             Console.WriteLine("2. Monte Carlo");
             
-            int choice = GetIntInput("Choix (1-2): ", 1, 2);
+            int choice = GetIntInput("Choice (1-2): ", 1, 2);
             return (choice == 1) ? "MomentMatching" : "MonteCarlo";
         }
 
@@ -154,39 +154,39 @@ namespace BasketOptionPricer
             (OptionType type, double strike, double maturity) optionParams,
             string pricingMethod)
         {
-            Console.WriteLine("\n🎯 RÉSULTATS");
+            Console.WriteLine("\n🎯 RESULTS");
             Console.WriteLine("═════════════");
             
-            // Création du panier
+            // Create basket
             var basket = new Basket(basketData.stocks, basketData.weights, 
                 financialParams.correlation, financialParams.riskFreeRate);
             
             var option = new BasketOption(basket, optionParams.type, optionParams.strike, optionParams.maturity);
             
-            // Affichage du résumé
-            Console.WriteLine($"\nRésumé de l'option:");
+            // Display summary
+            Console.WriteLine($"\nOption summary:");
             Console.WriteLine($"├─ Type: {optionParams.type}");
             Console.WriteLine($"├─ Strike: {optionParams.strike:F2} €");
-            Console.WriteLine($"├─ Maturité: {optionParams.maturity:F2} ans");
-            Console.WriteLine($"├─ Valeur panier: {basket.GetBasketValue():F2} €");
-            Console.WriteLine($"└─ Méthode: {pricingMethod}");
+            Console.WriteLine($"├─ Maturity: {optionParams.maturity:F2} years");
+            Console.WriteLine($"├─ Basket value: {basket.GetBasketValue():F2} €");
+            Console.WriteLine($"└─ Method: {pricingMethod}");
             Console.WriteLine();
             
-            // Calcul du prix
-            Console.WriteLine("Calcul en cours...");
+            // Calculate price
+            Console.WriteLine("Calculating...");
             
             if (pricingMethod == "MomentMatching")
             {
                 double price = MomentMatchingPricer.Price(option);
-                Console.WriteLine($"\n💰 Prix de l'option: {price:F4} €");
+                Console.WriteLine($"\n💰 Option price: {price:F4} €");
             }
             else // Monte Carlo
             {
-                int simulations = GetIntInput("Nombre de simulations (10000-1000000): ", 10000, 1000000, 100000);
+                int simulations = GetIntInput("Number of simulations (10000-1000000): ", 10000, 1000000, 100000);
                 
                 var mcPricer = new MonteCarloPricerH2(42);
                 
-                // Conversion vers H2 pour utiliser le MC amélioré
+                // Convert to H2 to use improved MC
                 var stocksH2 = new List<StockH2>();
                 foreach (var stock in basketData.stocks)
                     stocksH2.Add(new StockH2(stock.Name, stock.SpotPrice, stock.Volatility, stock.DividendRate));
@@ -196,25 +196,25 @@ namespace BasketOptionPricer
                 
                 var result = mcPricer.Price(optionH2, simulations, false);
                 
-                Console.WriteLine($"\n💰 Prix de l'option: {result.Price:F4} €");
-                Console.WriteLine($"📊 Écart-type: ±{result.StandardError:F4} €");
-                Console.WriteLine($"📈 Variance estimateur: {result.Variance:F6}");
-                Console.WriteLine($"🎯 Intervalle confiance 95%: [{result.Price - 1.96*result.StandardError:F4}, {result.Price + 1.96*result.StandardError:F4}] €");
+                Console.WriteLine($"\n💰 Option price: {result.Price:F4} €");
+                Console.WriteLine($"📊 Standard error: ±{result.StandardError:F4} €");
+                Console.WriteLine($"📈 Estimator variance: {result.Variance:F6}");
+                Console.WriteLine($"🎯 95% confidence interval: [{result.Price - 1.96*result.StandardError:F4}, {result.Price + 1.96*result.StandardError:F4}] €");
             }
             
             Console.WriteLine("\n" + new string('═', 50));
-            Console.WriteLine("Appuyez sur une touche pour continuer...");
+            Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
         }
 
-        // Méthodes utilitaires de saisie
+        // Input utility methods
         private static string GetStringInput(string prompt)
         {
             Console.Write(prompt);
             string input = Console.ReadLine()?.Trim();
             while (string.IsNullOrEmpty(input))
             {
-                Console.Write("Veuillez saisir une valeur: ");
+                Console.Write("Please enter a value: ");
                 input = Console.ReadLine()?.Trim();
             }
             return input;
@@ -233,7 +233,7 @@ namespace BasketOptionPricer
                 if (int.TryParse(input, out int value) && value >= min && value <= max)
                     return value;
                 
-                Console.WriteLine($"Veuillez saisir un entier entre {min} et {max}.");
+                Console.WriteLine($"Please enter an integer between {min} and {max}.");
             }
         }
 
@@ -251,7 +251,7 @@ namespace BasketOptionPricer
                     value >= min && value <= max)
                     return value;
                 
-                Console.WriteLine($"Veuillez saisir un nombre entre {min:F2} et {max:F2}.");
+                Console.WriteLine($"Please enter a number between {min:F2} and {max:F2}.");
             }
         }
     }
